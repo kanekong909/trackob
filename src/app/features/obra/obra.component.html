@@ -1,0 +1,122 @@
+<div class="obra-page" *ngIf="obra()">
+
+  <!-- Header móvil -->
+  <header class="header-movil">
+    <button class="btn-back" (click)="router.navigate(['/dashboard'])">‹</button>
+    <div class="header-titulo">{{ obra().nombre }}</div>
+    <button class="btn-settings" (click)="null">⚙️</button>
+  </header>
+
+  <!-- Tabs móvil (solo móvil) -->
+  <div class="tabs-movil">
+    @for (tab of TABS; track tab.id) {
+      <button class="tab-chip" [class.active]="esTabActivo(tab.id)" (click)="cambiarTab(tab.id)">
+        <img [src]="tab.icon" [alt]="tab.label" style="width:16px;height:16px">
+        {{ tab.label }}
+        @if (tab.id === 'tareas' && badgeTareas() > 0) {
+          <span class="tab-badge">{{ badgeTareas() }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Navbar flotante superior con tabs (solo desktop) -->
+   <header class="navbar-desktop">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <div class="navbar-logo" (click)="router.navigate(['/dashboard'])">
+          <div class="navbar-logo-icon">
+            <img src="assets/icons/logo.svg" alt="TrackOb" style="width:32px">
+          </div>
+          <div>
+            <div class="navbar-logo-text">TrackOb</div>
+            <div class="navbar-logo-sub">{{ obra().nombre }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs de la obra en el navbar -->
+      <nav class="navbar-center">
+        @for (tab of TABS; track tab.id) {
+          <a class="navbar-link" [class.active]="esTabActivo(tab.id)" (click)="cambiarTab(tab.id)">
+            <span class="tab-icon">
+              <img [src]="tab.icon" [alt]="tab.label" style="width:18px;height:18px">
+            </span>
+            <span class="link-text">{{ tab.label }}</span>
+            @if (tab.id === 'tareas' && badgeTareas() > 0) {
+              <span class="tab-badge-nav">{{ badgeTareas() }}</span>
+            }
+          </a>
+        }
+      </nav>
+
+      <div class="navbar-right">
+        <button class="btn-back-dashboard" (click)="router.navigate(['/dashboard'])">
+          <img src="assets/icons/left.svg" alt="Volver" style="width:21px">
+          <span>Volver</span>
+        </button>
+        <div class="navbar-usuario">
+          <div class="navbar-avatar">{{ usuario()?.nombre?.charAt(0)?.toUpperCase() }}</div>
+          <div class="navbar-user-info">
+            <div class="navbar-nombre">{{ usuario()?.nombre }}</div>
+            <div class="navbar-email">{{ usuario()?.email }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Área principal -->
+  <div class="main-content">
+    <div class="content-wrapper">
+      <!-- Topbar desktop -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="btn-back-dashboard-mobile" (click)="router.navigate(['/dashboard'])">
+            <img src="assets/icons/exit.svg" alt="Volver" style="width:21px">
+          </button>
+          <div class="topbar-titulo">{{ TABS.find(t => t.id === tabActivo())?.label }}</div>
+        </div>
+        <div class="topbar-actions" id="topbar-actions">
+          <!-- Se llena por cada tab -->
+        </div>
+      </div>
+
+      <!-- Contenido del tab activo -->
+      <div class="tab-content">
+        <div [hidden]="!esTabActivo('gastos')">
+          <app-tab-gastos [obra]="obra()"></app-tab-gastos>
+        </div>
+        <div [hidden]="!esTabActivo('resumen')">
+          <app-tab-resumen [obra]="obra()"></app-tab-resumen>
+        </div>
+        <div [hidden]="!esTabActivo('equipo')">
+           <app-tab-equipo [obra]="obra()"></app-tab-equipo>
+        </div>
+        <div [hidden]="!esTabActivo('progreso')">
+          <app-tab-progreso [obra]="obra()"></app-tab-progreso>
+        </div>
+        <div [hidden]="!esTabActivo('tareas')">
+          <app-tab-tareas [obra]="obra()" (badgeChange)="badgeTareas.set($event)"></app-tab-tareas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav móvil -->
+  <nav class="nav-movil">
+    <button class="nav-btn" (click)="router.navigate(['/dashboard'])">
+      <img src="assets/icons/home.svg" alt="Inicio">
+      <span>Inicio</span>
+    </button>
+    <button class="nav-btn active">
+      <img src="assets/icons/project.svg" alt="Obra">
+      <span>Obra</span>
+    </button>
+    <button class="nav-btn" (click)="cambiarTab('resumen')">
+      <img src="assets/icons/chart.svg" alt="Resumen">
+      <span>Resumen</span>
+    </button>
+  </nav>
+
+</div>

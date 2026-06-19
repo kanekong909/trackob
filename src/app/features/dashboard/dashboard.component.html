@@ -1,0 +1,251 @@
+<div class="dashboard">
+
+  <!-- NAVBAR DESKTOP -->
+  <header class="navbar-desktop">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <div class="navbar-logo">
+          <div class="navbar-logo-icon">
+            <img src="assets/icons/logo.svg" alt="TrackOb" style="width:32px">
+          </div>
+          <div>
+            <div class="navbar-logo-text">TrackOb</div>
+            <div class="navbar-logo-sub">Gestión de proyectos</div>
+          </div>
+        </div>
+      </div>
+
+     <nav class="navbar-center">
+        <a class="navbar-link active" (click)="router.navigate(['/dashboard'])">
+          <img src="assets/icons/project.svg" alt="Proyectos" style="width:21px">
+          <span class="link-text">Proyectos</span>
+        </a>
+        <a class="navbar-link" (click)="router.navigate(['/perfil'])">
+          <img src="assets/icons/usr.svg" alt="Perfil" style="width:21px">
+          <span class="link-text">Perfil</span>
+        </a>
+        @if (esSuperadmin) {
+          <a class="navbar-link" (click)="router.navigate(['/admin'])">
+            <img src="assets/icons/setting.svg" alt="Admin" style="width:21px">
+            <span class="link-text">Panel admin</span>
+          </a>
+        }
+      </nav>
+
+      <div class="navbar-right">
+        <div class="navbar-usuario">
+          <div class="navbar-avatar">{{ usuario()?.nombre?.charAt(0)?.toUpperCase() }}</div>
+          <div class="navbar-user-info">
+            <div class="navbar-nombre">{{ usuario()?.nombre }}</div>
+            <!-- <div class="navbar-email">{{ usuario()?.email }}</div> -->
+          </div>
+        </div>
+        <button class="navbar-logout" (click)="auth.logout()" title="Cerrar sesión">
+          <img src="assets/icons/exit.svg" alt="Cerrar sesión" style="width:21px">
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar original (solo móvil) -->
+  <aside class="sidebar-mobile">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">
+        <img src="assets/icons/logo.svg" alt="TrackOb" style="width:32px">
+      </div>
+      <div>
+        <div class="sidebar-logo-text">TrackOb</div>
+        <div class="sidebar-logo-sub">Gestión de proyectos</div>
+      </div>
+    </div>
+
+    <div class="sidebar-usuario">
+      <div class="sidebar-avatar">{{ usuario()?.nombre?.charAt(0)?.toUpperCase() }}</div>
+      <div>
+        <div class="sidebar-nombre">{{ usuario()?.nombre }}</div>
+        <div class="sidebar-email">{{ usuario()?.email }}</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-item active">
+        <img src="assets/icons/project.svg" alt="Proyectos" style="width:21px;margin-right:6px">
+        Proyectos
+      </div>
+      <div class="sidebar-nav-item" (click)="router.navigate(['/perfil'])">
+        <img src="assets/icons/user.svg" alt="Perfil" style="width:21px;margin-right:6px">
+        Perfil
+      </div>
+      @if (esSuperadmin) {
+        <div class="sidebar-nav-item" (click)="router.navigate(['/admin'])">
+          <img src="assets/icons/setting.svg" alt="Admin" style="width:21px;margin-right:6px">
+          Panel admin
+        </div>
+      }
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="sidebar-logout" (click)="auth.logout()">
+        <img src="assets/icons/exit.svg" alt="Cerrar sesión" style="width:21px;margin-right:6px">
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-titulo">Mis proyectos</div>
+      <button class="btn-nuevo" (click)="abrirNuevaObra()">
+        + Nuevo proyecto
+      </button>
+    </div>
+
+    <!-- Grid obras -->
+    <div class="obras-area">
+
+      @if (cargando()) {
+        <div class="estado-vacio">
+          <div class="estado-icon">⏳</div>
+          <div>Cargando proyectos…</div>
+        </div>
+      } @else if (!obras().length) {
+        <div class="estado-vacio">
+          <div class="estado-icon">🏗️</div>
+          <div class="estado-titulo">Sin proyectos aún</div>
+          <div class="estado-sub">Crea tu primer proyecto para empezar</div>
+          <button class="btn-nuevo" (click)="abrirNuevaObra()" style="margin-top:20px">
+            + Crear proyecto
+          </button>
+        </div>
+      } @else {
+        <div class="obras-grid">
+          @for (obra of obras(); track obra.id) {
+            <div class="obra-card" (click)="abrirObra(obra)">
+              <div class="obra-card-top">
+                <div class="obra-card-icon">
+                  <img src="assets/icons/logo.svg" alt="Proyecto">
+                </div>
+                <div class="obra-card-badges">
+                  @if (obra.tareas_pendientes > 0) {
+                    <span class="badge badge-warn">
+                      ⚠️ {{ obra.tareas_pendientes }} pendiente{{ obra.tareas_pendientes > 1 ? 's' : '' }}
+                    </span>
+                  } @else {
+                    <span class="badge badge-ok">✓ Al día</span>
+                  }
+                </div>
+              </div>
+
+              <div class="obra-card-nombre">{{ obra.nombre }}</div>
+              <div class="obra-card-ubicacion">{{ obra.ubicacion || 'Sin ubicación' }}</div>
+
+              <div class="obra-card-total">{{ obra.total_gastado | money }}</div>
+              <div class="obra-card-meta">{{ obra.total_gastos_count }} gasto{{ obra.total_gastos_count !== 1 ? 's' : '' }}</div>
+
+              @if (obra.presupuesto && obra.presupuesto > 0) {
+                <div class="obra-barra-wrap">
+                  <div class="obra-barra">
+                    <div class="obra-barra-fill"
+                      [style.width.%]="Math.min((obra.total_gastado / obra.presupuesto) * 100, 100)"
+                      [class.warn]="(obra.total_gastado / obra.presupuesto) > 0.8"
+                      [class.danger]="(obra.total_gastado / obra.presupuesto) > 1">
+                    </div>
+                  </div>
+                  <span class="obra-barra-label">
+                    {{ ((obra.total_gastado / obra.presupuesto) * 100).toFixed(0) }}% de {{ obra.presupuesto | money }}
+                  </span>
+                </div>
+              }
+
+              <div class="obra-card-footer">
+                @if (obra.descripcion) {
+                  <div class="obra-card-desc">{{ obra.descripcion | slice:0:50 }}{{ obra.descripcion.length > 50 ? '…' : '' }}</div>
+                } @else {
+                  <div></div>
+                }
+                <div class="obra-card-acciones" (click)="$event.stopPropagation()">
+                  <button class="obra-btn" (click)="abrirEditarObra($event, obra)" title="Editar">
+                    <img src="assets/icons/edit.svg" alt="Editar" style="width:20px">
+                  </button>
+                  <button class="obra-btn danger" (click)="pedirEliminar($event, obra)" title="Eliminar">
+                    <img src="assets/icons/delete.svg" alt="Eliminar" style="width:20px">
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </main>
+
+  <!-- Nav móvil -->
+  <nav class="nav-movil">
+    <button class="nav-btn active">
+      <img src="assets/icons/home.svg" alt="Obras">
+      <span>Obras</span>
+    </button>
+    <button class="nav-btn" (click)="abrirNuevaObra()"><span>➕</span><span>Nueva</span></button>
+    <button class="nav-btn" (click)="router.navigate(['/perfil'])"><img src="assets/icons/user-mobile.svg" alt="Perfil"> <span>Perfil</span></button>
+  </nav>
+
+</div>
+
+<!-- Modal: Nueva/Editar obra -->
+@if (mostrarFormObra()) {
+  <div class="overlay" (click)="mostrarFormObra.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">{{ obraEditando() ? 'Editar proyecto' : 'Nuevo proyecto' }}</div>
+
+      <div class="field">
+        <label>Nombre *</label>
+        <input type="text" [(ngModel)]="formNombre" placeholder="Ej: Casa Rodríguez, Bodega Norte…">
+      </div>
+      <div class="field">
+        <label>Descripción</label>
+        <textarea [(ngModel)]="formDesc" rows="2" placeholder="Descripción opcional…"></textarea>
+      </div>
+      <div class="field">
+        <label>Ubicación</label>
+        <input type="text" [(ngModel)]="formUbicacion" placeholder="Ej: Calle 45 #23-10">
+      </div>
+      <div class="field">
+        <label>Presupuesto (COP)</label>
+        <input type="text" [value]="formPresupuestoDisplay"
+          (input)="formatPresupuesto($event)" placeholder="0" inputmode="numeric">
+      </div>
+
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarFormObra.set(false)">Cancelar</button>
+        <button class="btn-prim" (click)="guardarObra()" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Confirmar eliminar -->
+@if (mostrarConfirmarEliminar()) {
+  <div class="overlay" (click)="mostrarConfirmarEliminar.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div style="text-align:center;padding:8px 0 16px">
+        <div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>
+        <div class="sheet-titulo">¿Eliminar proyecto?</div>
+        <div style="font-weight:700;margin:8px 0">{{ obraAEliminar()?.nombre }}</div>
+        <div style="color:#6d6d72;font-size:.88rem">Se eliminarán todos los gastos asociados.<br>Esta acción no se puede deshacer.</div>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarConfirmarEliminar.set(false)">Cancelar</button>
+        <button class="btn-danger" (click)="confirmarEliminar()" [disabled]="eliminando()">
+          {{ eliminando() ? 'Eliminando…' : 'Sí, eliminar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

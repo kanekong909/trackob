@@ -1,0 +1,146 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.login-wrapper {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+}
+
+// ── Columna izquierda ──
+.col-izq {
+  padding: 32px 28px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.marca {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+.marca-icono {
+  width: 44px; height: 44px;
+  background: #f5a623;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+.marca-nombre {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem; letter-spacing: 2px; line-height: .9;
+}
+.marca-tagline { font-size: .68rem; color: #888; letter-spacing: 3px; text-transform: uppercase; }
+
+.hero { flex: 1; }
+.hero-eyebrow {
+  font-size: .72rem; font-weight: 500; letter-spacing: 3px;
+  text-transform: uppercase; color: #f5a623;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+  &::before { content: ''; display: block; width: 24px; height: 1.5px; background: #f5a623; }
+}
+.hero-titulo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 12vw, 3.8rem);
+  letter-spacing: 3px; line-height: .92;
+  span { color: #f5a623; display: block; }
+}
+.hero-sub { font-size: .85rem; color: #888; line-height: 1.6; margin-top: 14px; }
+.hero-features { display: none; }
+
+// ── Columna derecha ──
+.col-der {
+  background: #111;
+  border-radius: 24px 24px 0 0;
+  border-top: 1px solid #2f2f2f;
+  padding: 28px 24px calc(28px + env(safe-area-inset-bottom));
+}
+
+.form-titulo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; }
+.form-sub { font-size: .82rem; color: #888; margin-bottom: 20px; margin-top: 2px; }
+
+.tabs {
+  display: flex;
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+.tab {
+  flex: 1; text-align: center; padding: 10px;
+  border-radius: 9px; font-size: .82rem; font-weight: 600;
+  color: #666; cursor: pointer; transition: all .25s;
+  &.active { color: #1c1c1e; background: #f5a623; }
+}
+
+.field {
+  margin-bottom: 14px;
+  label { display: block; font-size: .7rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 7px; }
+  input {
+    width: 100%; padding: 14px 16px;
+    background: #1a1a1a; border: 1.5px solid #2f2f2f;
+    border-radius: 10px; font-family: 'DM Sans', sans-serif;
+    font-size: .95rem; color: white; transition: border-color .2s;
+    &::placeholder { color: #444; }
+    &:focus { outline: none; border-color: #f5a623; background: #1f1f1f; }
+  }
+}
+
+.btn-entrar {
+  width: 100%; padding: 15px;
+  background: #f5a623; color: #1c1c1e; border: none;
+  border-radius: 10px; font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem; letter-spacing: 3px;
+  cursor: pointer; transition: all .15s; margin-top: 6px;
+  &:hover { background: #ffc85a; }
+  &:active { transform: scale(.97); }
+  &:disabled { opacity: .5; cursor: default; }
+}
+
+.error-msg {
+  background: #2a0a0a; color: #ff8888;
+  border: 1px solid #ff3b30; border-radius: 8px;
+  padding: 10px 14px; font-size: .85rem; margin-bottom: 14px;
+}
+
+.seguridad { text-align: center; font-size: .7rem; color: #555; margin-top: 16px; }
+
+// ── Desktop ──
+@media (min-width: 768px) {
+  .login-wrapper { flex-direction: row; }
+
+  .col-izq {
+    flex: 1; padding: 48px 56px;
+    border-right: 1px solid #2f2f2f;
+  }
+  .hero-titulo { font-size: clamp(3.5rem, 6vw, 5.5rem); }
+  .hero-features {
+    display: flex; flex-direction: column; gap: 14px; margin-top: 40px;
+    .feat-item {
+      display: flex; gap: 14px; align-items: center;
+      .feat-icon { width: 36px; height: 36px; background: rgba(245,166,35,.1); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      strong { display: block; font-size: .88rem; color: white; margin-bottom: 2px; }
+      span { font-size: .8rem; color: #666; }
+    }
+  }
+
+  .col-der {
+    width: 440px; flex-shrink: 0;
+    display: flex; align-items: center;
+    border-radius: 0; border-top: none;
+    padding: 48px 40px;
+  }
+  .form-card { width: 100%; }
+}
+
+@media (min-width: 1024px) {
+  .col-izq { padding: 64px 80px; }
+  .col-der { width: 480px; padding: 60px 56px; }
+}

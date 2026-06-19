@@ -1,0 +1,77 @@
+<div class="login-wrapper">
+  <!-- Columna izquierda -->
+  <div class="col-izq">
+    <div class="marca">
+      <div class="marca-icono">🏗️</div>
+      <div>
+        <div class="marca-nombre">TrackOb</div>
+        <div class="marca-tagline">Gestión total de proyectos</div>
+      </div>
+    </div>
+    <div class="hero">
+      <div class="hero-eyebrow">Plataforma profesional</div>
+      <div class="hero-titulo">Controla <span>cada peso</span></div>
+      <p class="hero-sub">Gastos, tareas, progreso y equipo en un solo lugar.</p>
+    </div>
+    <div class="hero-features">
+      <div class="feat-item" *ngFor="let f of features">
+        <div class="feat-icon">{{ f.icon }}</div>
+        <div><strong>{{ f.titulo }}</strong><span>{{ f.desc }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Columna derecha -->
+  <div class="col-der">
+    <div class="form-card">
+      <div class="form-titulo">{{ tab() === 'login' ? 'Bienvenido' : 'Crear cuenta' }}</div>
+      <div class="form-sub">{{ tab() === 'login' ? 'Ingresa a tu cuenta' : 'Regístrate gratis' }}</div>
+
+      <div class="tabs">
+        <div class="tab" [class.active]="tab() === 'login'" (click)="tab.set('login')">Entrar</div>
+        <div class="tab" [class.active]="tab() === 'registro'" (click)="tab.set('registro')">Crear cuenta</div>
+      </div>
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="error-msg">{{ error() }}</div>
+      }
+
+      <!-- Login -->
+      @if (tab() === 'login') {
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" [(ngModel)]="loginEmail" placeholder="tu@correo.com" (keyup.enter)="login()">
+        </div>
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" [(ngModel)]="loginPass" placeholder="••••••••" (keyup.enter)="login()">
+        </div>
+        <button class="btn-entrar" (click)="login()" [disabled]="cargando()">
+          {{ cargando() ? 'ENTRANDO…' : 'ENTRAR' }}
+        </button>
+      }
+
+      <!-- Registro -->
+      @if (tab() === 'registro') {
+        <div class="field">
+          <label>Tu nombre</label>
+          <input type="text" [(ngModel)]="regNombre" placeholder="Juan Pérez">
+        </div>
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" [(ngModel)]="regEmail" placeholder="tu@correo.com">
+        </div>
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" [(ngModel)]="regPass" placeholder="Mínimo 6 caracteres" (keyup.enter)="registro()">
+        </div>
+        <button class="btn-entrar" (click)="registro()" [disabled]="cargando()">
+          {{ cargando() ? 'CREANDO…' : 'CREAR CUENTA' }}
+        </button>
+      }
+
+      <div class="seguridad">🔒 Datos seguros y encriptados</div>
+    </div>
+  </div>
+</div>

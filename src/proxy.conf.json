@@ -1,0 +1,8 @@
+{
+  "/api/**": {
+    "target": "https://budjet-production.up.railway.app",
+    "changeOrigin": true,
+    "secure": true,
+    "logLevel": "debug"
+  }
+}

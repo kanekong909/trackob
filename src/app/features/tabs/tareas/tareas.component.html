@@ -1,0 +1,185 @@
+<!-- Filtros -->
+<div class="filtros-scroll">
+  <button class="filtro-chip" [class.active]="estadoFiltro() === ''" (click)="estadoFiltro.set('')">Todas</button>
+  <button class="filtro-chip" [class.active]="estadoFiltro() === 'pendiente'" (click)="estadoFiltro.set('pendiente')">🔴 Pendiente</button>
+  <button class="filtro-chip" [class.active]="estadoFiltro() === 'en_progreso'" (click)="estadoFiltro.set('en_progreso')">🟡 En progreso</button>
+</div>
+
+@if (cargando()) {
+  <div class="estado-vacio">⏳ Cargando tareas…</div>
+} @else {
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num rojo">{{ pendientes() }}</div>
+      <div class="stat-label">Pendiente</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num amarillo">{{ enProgreso() }}</div>
+      <div class="stat-label">En progreso</div>
+    </div>
+  </div>
+
+  <!-- Tareas activas -->
+  @if (!activas().length) {
+    <div class="estado-vacio">
+      <div class="vacio-icon">
+        <img src="assets/icons/check.svg" alt="Icon vacio" style="width: 55px;"/>
+      </div>
+      <div>{{ hechas().length ? '¡Todo completado!' : 'Sin tareas. Toca + para agregar.' }}</div>
+    </div>
+  } @else {
+    @for (t of activas(); track t.id) {
+      <div class="tarea-card">
+        <div class="tarea-body">
+          <div class="tarea-info">
+            <div class="tarea-titulo">{{ t.titulo }}</div>
+            @if (t.descripcion) {
+              <div class="tarea-desc">{{ t.descripcion }}</div>
+            }
+            <div class="tarea-meta">
+              <span [style.color]="getCfg(t.estado).color" style="font-weight:700">
+                {{ getCfg(t.estado).emoji }} {{ getCfg(t.estado).label }}
+              </span>
+              @if (t.fecha_limite) {
+                <span [class.vencida]="estaVencida(t)">
+                  {{ estaVencida(t) ? '⚠️ Vencida: ' : '📅 ' }}{{ formatDate(t.fecha_limite) }}
+                </span>
+              }
+              <span class="creador">Por: {{ t.creador_nombre || '—' }}</span>
+            </div>
+          </div>
+          <div class="tarea-acciones">
+            <button class="btn-estado" [style.background]="getCfg(t.estado).color"
+              (click)="cambiarEstado(t.id, getCfg(t.estado).next)">
+              {{ getCfg(t.estado).next === 'en_progreso' ? '▶ Iniciar' : '✓ Listo' }}
+            </button>
+            <button class="btn-icon-sm" (click)="verHistorial(t)" title="Historial">
+              <img src="assets/icons/clock.svg" alt="Ver historial" style="width: 19px;"/>
+            </button>
+            <button class="btn-icon-sm" (click)="abrirEditarTarea(t)">
+              <img src="assets/icons/ed.svg" alt="Editar tarea" style="width: 19px;"/>
+            </button>
+            <button class="btn-icon-sm" (click)="pedirEliminar(t)">
+              <img src="assets/icons/delete-black.svg" alt="Eliminar tarea" style="width: 19px;"/>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- Historial completadas -->
+  @if (hechas().length) {
+   <button class="btn-historial" (click)="toggleHistorial()">
+      <ng-container *ngIf="mostrarHistorial(); else mostrarOculto">
+        <img src="assets/icons/arrow-up.svg" alt="Ver historial" style="width: 22px;"/>
+        <span>Ocultar</span>
+      </ng-container>
+
+      <ng-template #mostrarOculto>
+        <img src="assets/icons/history.svg" alt="Ver historial" style="width: 22px;"/>
+        <span>Ver completadas ({{ hechas().length }})</span>
+      </ng-template>
+    </button>
+
+    @if (mostrarHistorial()) {
+      @for (t of hechas(); track t.id) {
+        <div class="tarea-card completada">
+          <div class="tarea-body">
+            <div class="tarea-info">
+              <div class="tarea-titulo tachado">{{ t.titulo }}</div>
+              <div class="tarea-meta">
+                <span style="color:#34c759;font-weight:700">🟢 Completada</span>
+                @if (t.completado_en) { <span>{{ formatDate(t.completado_en) }}</span> }
+                @if (t.completado_por_nombre) { <span>por {{ t.completado_por_nombre }}</span> }
+              </div>
+            </div>
+            <button class="btn-reabrir" (click)="cambiarEstado(t.id, 'pendiente')">↩ Reabrir</button>
+          </div>
+        </div>
+      }
+    }
+  }
+}
+
+<!-- FAB -->
+<button class="fab" (click)="abrirNuevaTarea()">+</button>
+
+<!-- Modal: Nueva/Editar tarea -->
+@if (mostrarForm()) {
+  <div class="overlay" (click)="mostrarForm.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">{{ tareaEditando() ? 'Editar tarea' : 'Nueva tarea' }}</div>
+      <div class="field">
+        <label>Título *</label>
+        <input type="text" [(ngModel)]="formTitulo" placeholder="Ej: Comprar cemento…">
+      </div>
+      <div class="field">
+        <label>Descripción</label>
+        <textarea [(ngModel)]="formDesc" rows="2" placeholder="Detalles opcionales…"></textarea>
+      </div>
+      <div class="field">
+        <label>Fecha límite</label>
+        <input type="date" [(ngModel)]="formFecha">
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarForm.set(false)">Cancelar</button>
+        <button class="btn-prim" (click)="guardarTarea()" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Confirmar eliminar -->
+@if (mostrarConfirmarEliminar()) {
+  <div class="overlay" (click)="mostrarConfirmarEliminar.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="confirm-center">
+        <div class="confirm-icon">🗑️</div>
+        <div class="sheet-titulo">¿Eliminar tarea?</div>
+        <div class="confirm-nombre">{{ tareaAEliminar()?.titulo }}</div>
+        <div class="confirm-sub">Esta acción no se puede deshacer.</div>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarConfirmarEliminar.set(false)">Cancelar</button>
+        <button class="btn-danger" (click)="confirmarEliminar()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Historial de tarea -->
+@if (mostrarHistorialTarea()) {
+  <div class="overlay" (click)="mostrarHistorialTarea.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">{{ tituloHistorial() }}</div>
+      @if (cargandoHistorial()) {
+        <div class="estado-vacio">⏳ Cargando…</div>
+      } @else if (!historialActual().length) {
+        <div class="estado-vacio">Sin cambios de estado aún.</div>
+      } @else {
+        @for (h of historialActual(); track h.id) {
+          <div class="historial-item">
+            <div class="historial-emoji">{{ ESTADO_LABELS[h.estado_nuevo]?.emoji || '⚪' }}</div>
+            <div class="historial-info">
+              <div class="historial-cambio">
+                {{ ESTADO_LABELS[h.estado_anterior]?.emoji }} {{ ESTADO_LABELS[h.estado_anterior]?.label }}
+                → {{ ESTADO_LABELS[h.estado_nuevo]?.emoji }} {{ ESTADO_LABELS[h.estado_nuevo]?.label }}
+              </div>
+              <div class="historial-usuario">👤 {{ h.usuario_nombre || '—' }}</div>
+              <div class="historial-fecha">📅 {{ formatDate(h.cambiado_en) }}</div>
+            </div>
+          </div>
+        }
+      }
+      <button class="btn-sec w-full mt-8" (click)="mostrarHistorialTarea.set(false)">Cerrar</button>
+    </div>
+  </div>
+}

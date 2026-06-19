@@ -1,0 +1,345 @@
+<div class="tab-gastos">
+
+  <!-- Barra selección múltiple -->
+  @if (modoSeleccion()) {
+    <div class="seleccion-bar">
+      <div class="seleccion-bar-left">
+        <button (click)="cancelarSeleccion()">✕</button>
+        <span>{{ nSeleccionados }} seleccionado{{ nSeleccionados !== 1 ? 's' : '' }}</span>
+      </div>
+      <div class="seleccion-bar-right">
+        <button (click)="seleccionarTodos()">Todos</button>
+        <button class="btn-suma" (click)="mostrarSuma.set(true)">Σ Suma</button>
+        <button (click)="abrirEdicionMasiva()">✏️ Editar</button>
+      </div>
+    </div>
+  }
+
+  <!-- Filtros categorías -->
+  <div class="filtros-scroll">
+    <button class="filtro-chip" [class.active]="catFiltro() === ''" (click)="filtrarCategoria('')">
+      📋 Todos <span class="chip-count">{{ conteosCat()['total'] || 0 }}</span>
+    </button>
+    @for (cat of categorias(); track cat.id) {
+      <button class="filtro-chip" [class.active]="catFiltro() === ('' + cat.id)"
+        (click)="filtrarCategoria('' + cat.id)"
+        [style.border-left]="'3px solid ' + cat.color">
+        {{ cat.nombre }}
+        <span class="chip-count">{{ conteosCat()[cat.id] || 0 }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Búsqueda -->
+  <div class="search-wrap">
+    <span class="search-icon">
+      <img src="assets/icons/search.svg" alt="Buscar" style="width: 22px;" />
+    </span>
+    <input type="text" [value]="busqFiltro()"
+      (input)="onBusqInput($event)"
+      placeholder="Buscar gasto, proveedor…">
+    @if (busqFiltro()) {
+      <button class="btn-limpiar" (click)="busqFiltro.set('')">✕</button>
+    }
+  </div>
+
+  <!-- Fechas -->
+  <div class="fechas-row">
+    <div class="fecha-wrap">
+      <input type="date" [value]="fechaDesde()"
+        (change)="onFechaDesdeChange($event)">
+      @if (fechaDesde()) {
+        <button class="btn-limpiar-fecha" (click)="limpiarFecha('desde')">✕</button>
+      }
+    </div>
+    <div class="fecha-wrap">
+      <input type="date" [value]="fechaHasta()"
+        (change)="onFechaHastaChange($event)">
+      @if (fechaHasta()) {
+        <button class="btn-limpiar-fecha" (click)="limpiarFecha('hasta')">✕</button>
+      }
+    </div>
+  </div>
+
+  <!-- Lista gastos -->
+  <div class="card-lista" [class.modo-seleccion]="modoSeleccion()">
+    @if (cargando()) {
+      <div class="estado-vacio">⏳ Cargando gastos…</div>
+    } @else if (!gastosFiltrados().length) {
+      <div class="estado-vacio">📋 Sin gastos</div>
+    } @else {
+      @for (g of gastosFiltrados(); track g.id) {
+        <div class="gasto-item"
+          [class.seleccionado]="isSeleccionado(g)"
+          (click)="modoSeleccion() ? toggleSeleccion(g) : verGasto(g)"
+          (mousedown)="!modoSeleccion() && activarSeleccionTimer(g)"
+          (mouseup)="cancelarTimer()"
+          (mouseleave)="cancelarTimer()"
+          (touchstart)="!modoSeleccion() && activarSeleccionTimer(g)"
+          (touchend)="cancelarTimer()"
+          (touchmove)="cancelarTimer()">
+          <div class="check-gasto" [class.visible]="modoSeleccion()">
+            {{ isSeleccionado(g) ? '✓' : '' }}
+          </div>
+          <div class="gasto-dot" [style.background]="g.categorias?.[0]?.color || '#aeaeb2'"></div>
+          <div class="gasto-info">
+            <div class="gasto-desc">{{ g._pendiente ? '💾 ' : '' }}{{ g.descripcion }}</div>
+            <div class="gasto-meta">
+              {{ formatDate(g.fecha) }}
+              @for (c of (g.categorias || []); track c.id) {
+                · <span class="cat-dot" [style.background]="c.color"></span>{{ c.nombre }}
+              }
+              @if (!g.categorias?.length) { · Sin categoría }
+              @if (g.proveedor) { · {{ g.proveedor }} }
+            </div>
+          </div>
+          @if (g.foto_url) { <span class="gasto-foto">📷</span> }
+          <div class="gasto-monto">{{ g.monto | money }}</div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Paginación -->
+  @if (totalPaginas() > 1) {
+    <div class="paginacion">
+      <button [disabled]="paginaActual() <= 1" (click)="cambiarPagina(-1)">‹ Anterior</button>
+      <span>{{ paginaActual() }} / {{ totalPaginas() }}</span>
+      <button [disabled]="paginaActual() >= totalPaginas()" (click)="cambiarPagina(1)">Siguiente ›</button>
+    </div>
+  }
+
+  <!-- Exportar -->
+  <div class="exportar-wrap">
+    <button class="btn-exportar" (click)="exportarCSV()">📥 Exportar Excel/CSV</button>
+  </div>
+
+  <!-- Total bar -->
+  <div class="total-bar">
+    <div>
+      <div class="total-label">Egresos</div>
+      @if (sumaIngresos() > 0) {
+        <div class="total-ingresos">Capital: {{ sumaIngresos() | money }}</div>
+      }
+    </div>
+    <div class="total-right">
+      <div class="total-monto">{{ sumaVisible() | money }}</div>
+      @if (sumaIngresos() > 0) {
+        <div class="total-disponible" [style.color]="sumaIngresos() >= sumaVisible() ? '#34c759' : '#ff3b30'">
+          Disp: {{ (sumaIngresos() - sumaVisible()) | money }}
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" (click)="abrirNuevoGasto()">+</button>
+
+  <!-- ===== MODAL: Agregar/Editar gasto ===== -->
+  @if (mostrarFormGasto()) {
+    <div class="overlay" (click)="mostrarFormGasto.set(false)">
+      <div class="sheet" (click)="$event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-titulo">{{ gastoEditando() ? 'Editar gasto' : 'Nuevo gasto' }}</div>
+
+        <div class="field">
+          <label>Descripción *</label>
+          <input type="text" [(ngModel)]="formDesc" placeholder="Ej: Cemento 50 sacos…">
+        </div>
+        <div class="row-fields">
+          <div class="field">
+            <label>Monto (COP) *</label>
+            <input type="text" [value]="formMontoDisplay" (input)="onMontoInput($event)" placeholder="0" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label>Fecha *</label>
+            <input type="date" [(ngModel)]="formFecha">
+          </div>
+        </div>
+
+        <!-- Categorías -->
+        <div class="field">
+          <label>Categorías</label>
+          <div class="cats-selector">
+            @for (cat of categorias(); track cat.id) {
+              <div class="cat-chip"
+                [style.background]="esCatSeleccionada(cat.id) ? cat.color : ''"
+                [style.color]="esCatSeleccionada(cat.id) ? '#fff' : ''"
+                [style.border-color]="esCatSeleccionada(cat.id) ? cat.color : ''"
+                (click)="toggleCategoria(cat.id)">
+                {{ cat.nombre }}
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Proveedor</label>
+          <input type="text" [(ngModel)]="formProveedor" placeholder="Ferretería, etc">
+        </div>
+
+        <div class="row-fields">
+          <div class="field">
+            <label>Cantidad</label>
+            <input type="number" [(ngModel)]="formCantidad" (input)="calcularMonto()" placeholder="0" min="0">
+          </div>
+          <div class="field">
+            <label>Unidad</label>
+            <input type="text" [(ngModel)]="formUnidad" placeholder="und, m², kg…">
+          </div>
+          <div class="field">
+            <label>Valor unitario</label>
+            <input type="text" [value]="formVunitarioDisplay" (input)="onVunitarioInput($event)" placeholder="0" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Notas</label>
+          <textarea [(ngModel)]="formNotas" rows="2" placeholder="Observaciones…"></textarea>
+        </div>
+
+        <!-- Foto -->
+        <div class="field">
+          <label>Foto / Factura</label>
+          <div class="foto-btns">
+            <label class="btn-sec">
+              📷 Cámara
+              <input type="file" accept="image/*" capture="environment" (change)="onFotoSeleccionada($event)" style="display:none">
+            </label>
+            <label class="btn-sec">
+              🖼️ Galería
+              <input type="file" accept="image/*,application/pdf" (change)="onFotoSeleccionada($event)" style="display:none">
+            </label>
+          </div>
+          @if (fotoPreviewUrl) {
+            <div class="foto-preview-wrap">
+              <img [src]="fotoPreviewUrl" class="foto-preview">
+              <button class="btn-quitar-foto" (click)="quitarFoto()">✕</button>
+            </div>
+          }
+        </div>
+
+        <div class="sheet-acciones">
+          <button class="btn-sec" (click)="mostrarFormGasto.set(false)">Cancelar</button>
+          <button class="btn-prim" (click)="guardarGasto()" [disabled]="guardando()">
+            {{ guardando() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ===== MODAL: Detalle gasto ===== -->
+  @if (mostrarDetalleGasto() && gastoDetalle()) {
+    <div class="overlay" (click)="mostrarDetalleGasto.set(false)">
+      <div class="sheet" (click)="$event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        @if (gastoDetalle()!.foto_url) {
+          <img [src]="gastoDetalle()!.foto_url" class="detalle-foto" (click)="abrirFotoEnNuevaTab(gastoDetalle()!.foto_url!)">
+        }
+        <div class="sheet-titulo">{{ gastoDetalle()!.descripcion }}</div>
+        <div class="detalle-grid">
+          <div class="stat-card"><div class="stat-label">Total</div><div class="stat-val">{{ gastoDetalle()!.monto | money }}</div></div>
+          <div class="stat-card"><div class="stat-label">Fecha</div><div class="stat-val">{{ formatDate(gastoDetalle()!.fecha) }}</div></div>
+          <div class="stat-card">
+            <div class="stat-label">Categoría</div>
+            <div class="stat-val">
+              @for (c of (gastoDetalle()!.categorias || []); track c.id) {
+                <span class="cat-badge" [style.background]="c.color">{{ c.nombre }}</span>
+              }
+              @if (!gastoDetalle()!.categorias?.length) { — }
+            </div>
+          </div>
+          <div class="stat-card"><div class="stat-label">Proveedor</div><div class="stat-val">{{ gastoDetalle()!.proveedor || '—' }}</div></div>
+        </div>
+        @if (gastoDetalle()!.notas) {
+          <div class="detalle-notas">{{ gastoDetalle()!.notas }}</div>
+        }
+        <div class="detalle-usuario">Registrado por: {{ gastoDetalle()!.usuario_nombre || '—' }}</div>
+        <div class="sheet-acciones">
+          <button class="btn-sec" (click)="abrirEditarGasto(gastoDetalle()!)">
+            <img src="assets/icons/edit.svg" alt="Editar" style="width: 20px;"/>
+            Editar
+          </button>
+          <button class="btn-danger" (click)="pedirEliminar()">
+            <img src="assets/icons/delete.svg" alt="Eliminar gasto" style="width: 20px;"/>
+          </button>
+        </div>
+        <button class="btn-sec w-full mt-8" (click)="mostrarDetalleGasto.set(false)">Cerrar</button>
+      </div>
+    </div>
+  }
+
+  <!-- ===== MODAL: Confirmar eliminar ===== -->
+  @if (mostrarConfirmarEliminar()) {
+    <div class="overlay" (click)="mostrarConfirmarEliminar.set(false)">
+      <div class="sheet" (click)="$event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="confirm-center">
+          <div class="confirm-icon">⚠️</div>
+          <div class="sheet-titulo">¿Eliminar gasto?</div>
+          <div class="confirm-nombre">{{ gastoDetalle()?.descripcion }}</div>
+          <div class="confirm-monto">{{ gastoDetalle()?.monto | money }}</div>
+          <div class="confirm-sub">Esta acción no se puede deshacer.</div>
+        </div>
+        <div class="sheet-acciones">
+          <button class="btn-sec" (click)="mostrarConfirmarEliminar.set(false)">Cancelar</button>
+          <button class="btn-danger" (click)="confirmarEliminar()">Sí, eliminar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ===== MODAL: Suma selección ===== -->
+  @if (mostrarSuma()) {
+    <div class="overlay" (click)="mostrarSuma.set(false)">
+      <div class="sheet" (click)="$event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-titulo">Σ Suma seleccionados</div>
+        <div class="suma-grid">
+          <div class="stat-card"><div class="stat-label">Gastos</div><div class="stat-val">{{ nSeleccionados }}</div></div>
+          <div class="stat-card"><div class="stat-label">Total</div><div class="stat-val amarillo">{{ sumaSeleccionados | money }}</div></div>
+          <div class="stat-card full"><div class="stat-label">Promedio</div><div class="stat-val">{{ (sumaSeleccionados / nSeleccionados) | money }}</div></div>
+        </div>
+        <button class="btn-sec w-full" (click)="mostrarSuma.set(false)">Cerrar</button>
+      </div>
+    </div>
+  }
+
+  <!-- ===== MODAL: Edición masiva ===== -->
+  @if (mostrarEdicionMasiva()) {
+    <div class="overlay" (click)="mostrarEdicionMasiva.set(false)">
+      <div class="sheet" (click)="$event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-titulo">
+          ✏️ Editar {{ nSeleccionados }} gastos
+        </div>
+        <p class="sheet-sub">El cambio se aplicará a todos los seleccionados.</p>
+        <div class="field">
+          <label>Campo a editar</label>
+          <select [(ngModel)]="bulkCampo">
+            <option value="">Selecciona…</option>
+            <option value="proveedor">Proveedor</option>
+            <option value="fecha">Fecha</option>
+            <option value="notas">Notas</option>
+          </select>
+        </div>
+        @if (bulkCampo) {
+          <div class="field">
+            <label>Nuevo valor</label>
+            @if (bulkCampo === 'fecha') {
+              <input type="date" [(ngModel)]="bulkValor">
+            } @else {
+              <input type="text" [(ngModel)]="bulkValor" [placeholder]="bulkCampo">
+            }
+          </div>
+        }
+        <div class="sheet-acciones">
+          <button class="btn-sec" (click)="mostrarEdicionMasiva.set(false)">Cancelar</button>
+          <button class="btn-prim" (click)="guardarEdicionMasiva()">Aplicar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

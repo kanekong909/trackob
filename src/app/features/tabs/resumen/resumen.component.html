@@ -1,0 +1,145 @@
+@if (cargando()) {
+  <div class="estado-vacio">⏳ Cargando resumen…</div>
+} @else if (resumen()) {
+
+  <!-- Stats principales -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total gastado</div>
+      <div class="stat-val grande">
+        {{ resumen()!.totales.total_gastado | money }}
+        @if (resumen()!.totales.total_ingresos > 0) {
+          <div class="stat-sub verde">Capital: {{ resumen()!.totales.total_ingresos | money }}</div>
+          <div class="stat-sub" [class.verde]="resumen()!.totales.total_ingresos >= resumen()!.totales.total_gastado" [class.rojo]="resumen()!.totales.total_ingresos < resumen()!.totales.total_gastado">
+            Disp: {{ (resumen()!.totales.total_ingresos - resumen()!.totales.total_gastado) | money }}
+          </div>
+        }
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Nº gastos</div>
+      <div class="stat-val grande">{{ resumen()!.totales.cantidad_gastos }}</div>
+    </div>
+  </div>
+
+  <!-- Presupuesto -->
+  @if (resumen()!.obra.presupuesto > 0) {
+    <div class="card">
+      <div class="card-header">
+        <div class="card-titulo">Presupuesto</div>
+        <div class="porc" [class.danger]="getPorcentajePresupuesto() > 100" [class.warn]="getPorcentajePresupuesto() > 80">
+          {{ getPorcentajePresupuesto() }}%
+        </div>
+      </div>
+      <div class="barra-wrap">
+        <div class="barra-fill"
+          [style.width.%]="Math.min(getPorcentajePresupuesto(), 100)"
+          [class.warn]="getPorcentajePresupuesto() > 80"
+          [class.danger]="getPorcentajePresupuesto() > 100">
+        </div>
+      </div>
+      <div class="barra-meta">
+        <span>Gastado: <strong>{{ resumen()!.totales.total_gastado | money }}</strong></span>
+        <span>Total: <strong>{{ resumen()!.obra.presupuesto | money }}</strong></span>
+      </div>
+    </div>
+  }
+
+  <!-- Por categoría -->
+  <div class="card">
+    <div class="card-titulo">Por categoría</div>
+    @for (cat of resumen()!.por_categoria; track cat.id) {
+      <div class="bar-row">
+        <div class="bar-label">{{ cat.nombre }}{{ cat.tipo === 'ingreso' ? ' ↑' : '' }}</div>
+        <div class="bar-track">
+          <div class="bar-fill" [style.background]="cat.color"
+            [style.width.%]="Math.round((cat.total / getMaxCategoria()) * 100)">
+          </div>
+        </div>
+        <div class="bar-monto">{{ cat.total | money }}</div>
+      </div>
+    }
+    @if (!resumen()!.por_categoria.length) {
+      <div class="vacio">Sin datos</div>
+    }
+  </div>
+
+  <!-- Resumen semanal -->
+  @if (semanal()) {
+    <div class="card">
+      <div class="card-titulo">📅 Esta semana</div>
+
+      <!-- Comparativo semana -->
+      <div class="semanal-grid">
+        <div class="stat-card">
+          <div class="stat-label">Esta semana</div>
+          <div class="stat-val">{{ semanal()!.semana_actual | money }}</div>
+          @if (getDiffPorcentaje(semanal()!.semana_actual, semanal()!.semana_anterior); as diff) {
+            <div class="diff" [class.sube]="diff > 0" [class.baja]="diff < 0">
+              {{ diff > 0 ? '▲' : '▼' }} {{ diff | number:'1.0-0' }}%
+            </div>
+          }
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Semana pasada</div>
+          <div class="stat-val gris">{{ semanal()!.semana_anterior | money }}</div>
+        </div>
+      </div>
+
+      <!-- Barras por día -->
+      <div class="dias-wrap">
+        @for (dia of DIAS; track dia; let i = $index) {
+          <div class="dia-col">
+            <div class="dia-val">
+              {{ (semanal()!.dias_semana[i] || 0) > 0 ? ((semanal()!.dias_semana[i] | money) | slice:0:-3) : '' }}
+            </div>
+            <div class="dia-barra-wrap">
+              <div class="dia-barra"
+                [style.height.px]="getAlturaBarra(semanal()!.dias_semana[i] || 0)"
+                [class.hoy]="i === getDiaIdx()">
+              </div>
+            </div>
+            <div class="dia-label" [class.hoy]="i === getDiaIdx()">
+              {{ dia }}<br><span>{{ getDiaSemana(i) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Comparativo mes -->
+      <div class="sep"></div>
+      <div class="mes-row">
+        <div>
+          <div class="stat-label">Este mes</div>
+          <div class="fw-700">{{ semanal()!.mes_actual | money }}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="stat-label">Mes anterior</div>
+          <div class="gris fw-600">{{ semanal()!.mes_anterior | money }}</div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Top gastos -->
+  <div class="card">
+    <div class="card-titulo">Mayores gastos</div>
+    @for (g of topGastos(); track g.id) {
+      <div class="top-item">
+        <div class="top-dot" [style.background]="g.categorias?.[0]?.color || '#aeaeb2'"></div>
+        <div class="top-info">
+          <div class="top-desc">{{ g.descripcion }}</div>
+          <div class="top-fecha">{{ formatDate(g.fecha) }}</div>
+        </div>
+        <div class="top-monto">{{ g.monto | money }}</div>
+      </div>
+    }
+    @if (!topGastos().length) {
+      <div class="vacio">Sin datos</div>
+    }
+  </div>
+
+  <!-- Reporte PDF -->
+  <button class="btn-reporte" (click)="irReporte()">🖨️ Generar reporte PDF</button>
+
+}

@@ -1,0 +1,249 @@
+<!-- Filtros etapa -->
+<div class="filtros-scroll">
+  <button class="filtro-chip" [class.active]="etapaFiltro() === ''" (click)="filtrarEtapa('')">Todas</button>
+  @for (e of etapas; track e) {
+    <button class="filtro-chip" [class.active]="etapaFiltro() === e" (click)="filtrarEtapa(e)">{{ e }}</button>
+  }
+</div>
+
+@if (cargando()) {
+  <div class="estado-vacio">⏳ Cargando…</div>
+} @else if (!getFechas().length) {
+  <div class="estado-vacio">
+    <div class="vacio-icon">📷</div>
+    <div>Sin registros aún</div>
+    <button class="btn-agregar-vacio" (click)="abrirSubirFoto()">+ Agregar foto</button>
+  </div>
+} @else {
+
+  <!-- Timeline -->
+  @for (fecha of getFechas(); track fecha) {
+    <div class="dia-grupo">
+
+      <!-- Cabecera fecha -->
+      <div class="dia-header">
+        <div class="dia-dot"></div>
+        <div class="dia-fecha">{{ formatDate(fecha) }}</div>
+        <div class="dia-linea"></div>
+        @if (getFotosDia(fecha).length) {
+          <span class="dia-count">{{ getFotosDia(fecha).length }} foto{{ getFotosDia(fecha).length > 1 ? 's' : '' }}</span>
+        }
+        <button class="btn-nota"
+          [class.tiene-nota]="!!getNotaDia(fecha)"
+          (click)="abrirNota(fecha, getNotaDia(fecha))">
+          {{ getNotaDia(fecha) ? '📝' : '+ Nota' }}
+        </button>
+      </div>
+
+      <!-- Nota del día -->
+      @if (getNotaDia(fecha); as nota) {
+        <div class="nota-card">
+          <div class="nota-texto">{{ nota.nota }}</div>
+          <div class="nota-meta">✍️ {{ nota.autor_nombre || '—' }}</div>
+          <button class="btn-eliminar-nota" (click)="eliminarNota(nota.id)">✕</button>
+        </div>
+      }
+
+      <!-- Fotos del día -->
+      @if (getFotosDia(fecha).length) {
+        <div class="fotos-grid">
+          @for (f of getFotosDia(fecha); track f.id) {
+            <div class="foto-item" (click)="abrirCarrusel(f.id)">
+              <img [src]="cloudinaryOpt(f.foto_url, 'thumb')" [alt]="f.etapa || ''" loading="lazy">
+              @if (f.etapa) {
+                <div class="foto-etapa">{{ f.etapa }}</div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  }
+}
+
+<!-- FAB -->
+<button class="fab" (click)="mostrarFabMenu.set(true)">+</button>
+
+<!-- FAB Menu -->
+@if (mostrarFabMenu()) {
+  <div class="overlay" (click)="mostrarFabMenu.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">¿Qué quieres agregar?</div>
+      <div class="fab-opciones">
+        <button class="fab-opcion" (click)="abrirSubirFoto()">
+          <span class="fab-opcion-icon">📷</span>
+          <span>Foto</span>
+        </button>
+        <button class="fab-opcion" (click)="abrirNotaHoy()">
+          <span class="fab-opcion-icon">📝</span>
+          <span>Nota del día</span>
+        </button>
+      </div>
+      <button class="btn-sec w-full mt-8" (click)="mostrarFabMenu.set(false)">Cancelar</button>
+    </div>
+  </div>
+}
+
+<!-- Modal: Subir foto -->
+@if (mostrarSubirFoto()) {
+  <div class="overlay" (click)="mostrarSubirFoto.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">📸 Foto de progreso</div>
+      <div class="field">
+        <label>Foto *</label>
+        <div class="foto-btns">
+          <label class="btn-sec">
+            📷 Cámara
+            <input type="file" accept="image/*" capture="environment" (change)="onFotoSeleccionada($event)" style="display:none">
+          </label>
+          <label class="btn-sec">
+            🖼️ Galería
+            <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" style="display:none">
+          </label>
+        </div>
+        @if (fotoPreviewUrl) {
+          <img [src]="fotoPreviewUrl" class="foto-preview">
+        }
+      </div>
+      <div class="row-fields">
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" [(ngModel)]="formFecha">
+        </div>
+        <div class="field">
+          <label>Etapa</label>
+          <select [(ngModel)]="formEtapa">
+            <option value="">Sin etapa</option>
+            @for (e of etapas; track e) {
+              <option [value]="e">{{ e }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarSubirFoto.set(false)">Cancelar</button>
+        <button class="btn-prim" (click)="subirFoto()" [disabled]="subiendo() || !fotoFile">
+          {{ subiendo() ? 'Subiendo…' : 'Subir foto' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Carrusel -->
+@if (carruselAbierto() && fotoActual()) {
+  <div class="carrusel-overlay"
+    (touchstart)="onTouchStart($event)"
+    (touchend)="onTouchEnd($event)">
+
+    <!-- Header -->
+    <div class="carrusel-header">
+      <button class="carrusel-cerrar" (click)="cerrarCarrusel()">✕</button>
+      <div class="carrusel-contador">{{ carruselIndex() + 1 }} / {{ carruselFotos().length }}</div>
+      <div class="carrusel-acciones">
+        <button (click)="abrirEditarFoto()">
+          <img src="assets/icons/ed.svg" alt="Editar imagen" style="width: 19px;"/>
+          Editar
+        </button>
+        <button class="danger" (click)="pedirEliminarFoto()">
+          <img src="assets/icons/delete-white.svg" alt="Eliminar imagen" style="width: 19px;"/>
+        </button>
+      </div>
+    </div>
+
+    <!-- Imagen -->
+    <div class="carrusel-img-wrap">
+      <img [src]="cloudinaryOpt(fotoActual()!.foto_url, 'medium')" class="carrusel-img" (click)="abrirEnNuevaTab(fotoActual()!.foto_url)">
+      @if (carruselFotos().length > 1) {
+        <button class="carrusel-prev" (click)="navegar(-1)" [style.opacity]="carruselIndex() === 0 ? '0.3' : '1'">‹</button>
+        <button class="carrusel-next" (click)="navegar(1)" [style.opacity]="carruselIndex() === carruselFotos().length - 1 ? '0.3' : '1'">›</button>
+      }
+    </div>
+
+    <!-- Info -->
+    <div class="carrusel-info">
+      <div class="carrusel-fecha">{{ formatDate(fotoActual()!.fecha) }}</div>
+      <div class="carrusel-etapa">{{ fotoActual()!.etapa || 'Sin etapa' }}</div>
+      <div class="carrusel-usuario">📷 {{ fotoActual()!.usuario_nombre || '—' }}</div>
+      <!-- Thumbnails -->
+      <div class="carrusel-thumbs">
+        @for (f of carruselFotos(); track f.id; let i = $index) {
+          <img [src]="cloudinaryOpt(f.foto_url, 'thumb')"
+            (click)="irA(i)"
+            [style.border-color]="i === carruselIndex() ? '#f5a623' : 'transparent'"
+            [style.opacity]="i === carruselIndex() ? '1' : '0.5'">
+        }
+      </div>
+    </div>
+
+  </div>
+}
+
+<!-- Modal: Editar foto -->
+@if (mostrarEditarFoto()) {
+  <div class="overlay" (click)="mostrarEditarFoto.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">Editar foto</div>
+      <div class="row-fields">
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" [(ngModel)]="editFecha">
+        </div>
+        <div class="field">
+          <label>Etapa</label>
+          <select [(ngModel)]="editEtapa">
+            <option value="">Sin etapa</option>
+            @for (e of etapas; track e) { <option [value]="e">{{ e }}</option> }
+          </select>
+        </div>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarEditarFoto.set(false)">Cancelar</button>
+        <button class="btn-prim" (click)="guardarEdicionFoto()">Guardar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Confirmar eliminar foto -->
+@if (mostrarConfirmarEliminar()) {
+  <div class="overlay" (click)="mostrarConfirmarEliminar.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="confirm-center">
+        <div class="confirm-icon">🗑️</div>
+        <div class="sheet-titulo">¿Eliminar foto?</div>
+        <div class="confirm-sub">Esta acción no se puede deshacer.</div>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarConfirmarEliminar.set(false)">Cancelar</button>
+        <button class="btn-danger" (click)="confirmarEliminarFoto()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Nota -->
+@if (mostrarNota()) {
+  <div class="overlay" (click)="mostrarNota.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">📝 Nota del día</div>
+      <div class="nota-fecha-label">{{ formatDate(notaFecha()) }}</div>
+      <div class="field">
+        <label>¿Qué pasó hoy?</label>
+        <textarea [(ngModel)]="notaTexto" rows="5" placeholder="Ej: Llegaron 3 obreros, se colocaron vigas…"></textarea>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarNota.set(false)">Cancelar</button>
+        <button class="btn-prim" (click)="guardarNota()" [disabled]="guardandoNota()">
+          {{ guardandoNota() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

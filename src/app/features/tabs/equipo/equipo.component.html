@@ -1,0 +1,142 @@
+@if (cargando()) {
+  <div class="estado-vacio">⏳ Cargando…</div>
+} @else {
+
+  <!-- Colaboradores -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-titulo">Colaboradores</div>
+      <button class="btn-sm" (click)="abrirInvitar()">+ Invitar</button>
+    </div>
+
+    @if (!colaboradores().length) {
+      <div class="vacio">Sin colaboradores aún</div>
+    } @else {
+      @for (c of colaboradores(); track c.id) {
+        <div class="colab-item">
+          <div class="colab-avatar">{{ getInicial(c.nombre) }}</div>
+          <div class="colab-info">
+            <div class="colab-nombre">{{ c.nombre }}</div>
+            <div class="colab-email">{{ c.email }}</div>
+          </div>
+          <span class="badge-rol" [class.admin]="c.rol === 'admin'">{{ c.rol }}</span>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Categorías -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-titulo">Categorías</div>
+    </div>
+
+    @for (cat of categorias(); track cat.id) {
+      <div class="cat-item">
+        <div class="cat-dot" [style.background]="cat.color"></div>
+        <div class="cat-nombre">{{ cat.nombre }}</div>
+        @if (cat.tipo === 'ingreso') {
+          <span class="badge-ingreso">Ingreso</span>
+        }
+        @if (cat.es_global) {
+          <span class="badge-global">Global</span>
+        }
+        <div class="cat-acciones">
+          <button class="cat-btn" (click)="abrirEditarCat(cat)">
+            <img src="assets/icons/ed.svg" alt="Editar categoria" style="width: 15px;"/>
+          </button>
+          @if (!cat.es_global) {
+            <button class="cat-btn danger" (click)="pedirEliminarCat(cat)">
+              <img src="assets/icons/delete.svg" alt="Eliminar categoria" style="width: 15px;"/>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <button class="btn-nueva-cat" (click)="abrirNuevaCat()">+ Nueva categoría</button>
+  </div>
+
+}
+
+<!-- Modal: Invitar -->
+@if (mostrarInvitar()) {
+  <div class="overlay" (click)="mostrarInvitar.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">Invitar colaborador</div>
+      <p class="sheet-sub">El colaborador ya debe estar registrado en la app.</p>
+      <div class="field">
+        <label>Correo</label>
+        <input type="email" [(ngModel)]="invEmail" placeholder="colaborador@correo.com">
+      </div>
+      <div class="field">
+        <label>Rol</label>
+        <select [(ngModel)]="invRol">
+          <option value="colaborador">Colaborador (puede agregar gastos)</option>
+          <option value="admin">Admin (puede todo)</option>
+        </select>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarInvitar.set(false)">Cancelar</button>
+        <button class="btn-prim" (click)="invitar()" [disabled]="invitando()">
+          {{ invitando() ? 'Invitando…' : 'Invitar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Nueva/Editar categoría -->
+@if (mostrarNuevaCat() || mostrarEditarCat()) {
+  <div class="overlay" (click)="mostrarNuevaCat.set(false); mostrarEditarCat.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-titulo">{{ catEditandoId() ? 'Editar categoría' : 'Nueva categoría' }}</div>
+      <div class="field">
+        <label>Nombre</label>
+        <input type="text" [(ngModel)]="catNombre" placeholder="Ej: Acabados, Electricidad…">
+      </div>
+      <div class="row-fields">
+        <div class="field">
+          <label>Color</label>
+          <input type="color" [(ngModel)]="catColor" style="height:44px;padding:4px;width:100%">
+        </div>
+        <div class="field">
+          <label>Tipo</label>
+          <select [(ngModel)]="catTipo">
+            <option value="egreso">Egreso (gasto)</option>
+            <option value="ingreso">Ingreso (capital)</option>
+          </select>
+        </div>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarNuevaCat.set(false); mostrarEditarCat.set(false)">Cancelar</button>
+        <button class="btn-prim" (click)="guardarCategoria()" [disabled]="guardandoCat()">
+          {{ guardandoCat() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Confirmar eliminar categoría -->
+@if (mostrarConfirmarEliminarCat()) {
+  <div class="overlay" (click)="mostrarConfirmarEliminarCat.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="confirm-center">
+        <div class="confirm-icon">
+          <img src="assets/icons/delete.svg" alt="Eliminar categoria" style="width: 15px;"/>
+        </div>
+        <div class="sheet-titulo">¿Eliminar categoría?</div>
+        <div class="confirm-nombre">{{ catAEliminarNombre() }}</div>
+        <div class="confirm-sub">Los gastos con esta categoría quedarán sin categoría.</div>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarConfirmarEliminarCat.set(false)">Cancelar</button>
+        <button class="btn-danger" (click)="confirmarEliminarCat()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+}

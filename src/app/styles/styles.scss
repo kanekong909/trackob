@@ -1,0 +1,16 @@
+@use "sass:meta";
+@use 'variables';
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+@include meta.load-css('base');
+@include meta.load-css('components');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--gris-bg);
+  color: var(--texto);
+  min-height: 100dvh;
+}

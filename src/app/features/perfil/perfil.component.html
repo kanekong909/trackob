@@ -1,0 +1,216 @@
+<div class="perfil-page">
+
+  <!-- Navbar flotante superior (solo desktop) -->
+  <header class="navbar-desktop">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <div class="navbar-logo" (click)="router.navigate(['/dashboard'])">
+          <div class="navbar-logo-icon">
+            <img src="assets/icons/logo.svg" alt="TrackOb" style="width:32px">
+          </div>
+          <div>
+            <div class="navbar-logo-text">TrackOb</div>
+            <div class="navbar-logo-sub">Gestión de proyectos</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="navbar-center">
+        <a class="navbar-link" (click)="router.navigate(['/dashboard'])">
+          <img src="assets/icons/project.svg" alt="Proyectos" style="width:21px">
+          <span class="link-text">Proyectos</span>
+        </a>
+        <a class="navbar-link active" (click)="router.navigate(['/perfil'])">
+          <img src="assets/icons/user.svg" alt="Perfil" style="width:21px">
+          <span class="link-text">Perfil</span>
+        </a>
+        @if (esSuperadmin()) {
+          <a class="navbar-link" (click)="router.navigate(['/admin'])">
+            <img src="assets/icons/setting.svg" alt="Admin" style="width:21px">
+            <span class="link-text">Panel admin</span>
+          </a>
+        }
+      </nav>
+
+      <div class="navbar-right">
+        <div class="navbar-usuario">
+          <div class="navbar-avatar">{{ perfil()?.nombre?.charAt(0)?.toUpperCase() }}</div>
+          <div class="navbar-user-info">
+            <div class="navbar-nombre">{{ perfil()?.nombre }}</div>
+            <!-- <div class="navbar-email">{{ perfil()?.email }}</div> -->
+          </div>
+        </div>
+        <button class="navbar-logout" (click)="mostrarConfirmarLogout.set(true)" title="Cerrar sesión">
+          <img src="assets/icons/exit.svg" alt="Cerrar sesión" style="width:21px">
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar móvil (solo móvil) -->
+  <aside class="sidebar-mobile">
+    <div class="sidebar-logo" (click)="router.navigate(['/dashboard'])">
+      <div class="sidebar-logo-icon">
+        <img src="assets/icons/logo.svg" alt="TrackOb" style="width:32px">
+      </div>
+      <div>
+        <div class="sidebar-logo-text">TrackOb</div>
+        <div class="sidebar-logo-sub">Gestión de proyectos</div>
+      </div>
+    </div>
+
+    <div class="sidebar-usuario">
+      <div class="sidebar-avatar">{{ perfil()?.nombre?.charAt(0)?.toUpperCase() }}</div>
+      <div>
+        <div class="sidebar-nombre">{{ perfil()?.nombre }}</div>
+        <div class="sidebar-email">{{ perfil()?.email }}</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-item" (click)="router.navigate(['/dashboard'])">
+        <img src="assets/icons/project.svg" alt="Proyectos" style="width:21px;margin-right:6px">
+        Proyectos
+      </div>
+      <div class="sidebar-nav-item active">
+        <img src="assets/icons/user.svg" alt="Perfil" style="width:21px;margin-right:6px">
+        Perfil
+      </div>
+      @if (esSuperadmin()) {
+        <div class="sidebar-nav-item" (click)="router.navigate(['/admin'])">
+          <img src="assets/icons/setting.svg" alt="Admin" style="width:21px;margin-right:6px">
+          Panel admin
+        </div>
+      }
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="sidebar-logout" (click)="mostrarConfirmarLogout.set(true)">
+        <img src="assets/icons/exit.svg" alt="Cerrar sesión" style="width:21px;margin-right:6px">
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido -->
+  <main class="main-content">
+    <div class="content-wrapper">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="topbar-titulo">Mi perfil</div>
+      </div>
+
+      @if (cargando()) {
+        <div class="estado-cargando">⏳ Cargando…</div>
+      } @else {
+        <div class="perfil-content">
+
+          <!-- Avatar y nombre -->
+          <div class="card avatar-card">
+            <div class="avatar-grande">{{ perfil()?.nombre?.charAt(0)?.toUpperCase() }}</div>
+            @if (!editandoNombre()) {
+              <div class="avatar-nombre">{{ perfil()?.nombre }}</div>
+              <div class="avatar-email">{{ perfil()?.email }}</div>
+              <div class="avatar-rol">{{ perfil()?.rol }}</div>
+              <button class="btn-editar-nombre" (click)="abrirEditarNombre()">✏️ Editar nombre</button>
+            } @else {
+              <div class="editar-nombre-wrap">
+                <input type="text" [(ngModel)]="nuevoNombre" placeholder="Tu nombre" class="input-nombre">
+                <div class="editar-nombre-acciones">
+                  <button class="btn-sec" (click)="editandoNombre.set(false)">Cancelar</button>
+                  <button class="btn-prim" (click)="guardarNombre()" [disabled]="guardando()">
+                    {{ guardando() ? 'Guardando…' : 'Guardar' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Fondo de pantalla -->
+          <div class="card">
+            <div class="card-titulo">🖼️ Fondo de pantalla</div>
+            <p class="card-sub">Elige un wallpaper o sube tu propia imagen HD.</p>
+
+            <div class="wallpapers-grid">
+              @for (w of wallpapers; track w.full) {
+                <div class="wallpaper-item"
+                  [class.seleccionado]="esFondoSeleccionado(w.full)"
+                  (click)="elegirWallpaper(w.full)">
+                  <img [src]="w.thumb" [alt]="w.label" loading="lazy">
+                  <div class="wallpaper-label">{{ w.label }}</div>
+                  @if (esFondoSeleccionado(w.full)) {
+                    <div class="wallpaper-check">✓</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="fondo-acciones">
+              <label class="btn-subir">
+                📁 Subir imagen
+                <input type="file" accept="image/*" (change)="subirFondoPropio($event)" style="display:none">
+              </label>
+              @if (fondoActual()) {
+                <button class="btn-quitar" (click)="quitarFondo()">✕ Quitar fondo</button>
+              }
+            </div>
+          </div>
+
+          <!-- Admin -->
+          @if (esSuperadmin()) {
+            <div class="card">
+              <div class="card-titulo">⚙️ Administración</div>
+              <button class="btn-admin" (click)="router.navigate(['/admin'])">
+                Ir al panel de administración →
+              </button>
+            </div>
+          }
+
+          <!-- Cerrar sesión -->
+          <div class="card">
+            <button class="btn-logout" (click)="mostrarConfirmarLogout.set(true)">
+              🚪 Cerrar sesión
+            </button>
+          </div>
+
+        </div>
+      }
+    </div>
+  </main>
+
+  <!-- Nav móvil -->
+  <nav class="nav-movil">
+    <button class="nav-btn" (click)="router.navigate(['/dashboard'])">
+      <img src="assets/icons/home.svg" alt="Obras">
+      <span>Obras</span>
+    </button>
+    <button class="nav-btn active">
+      <img src="assets/icons/user-mobile.svg" alt="Perfil">
+      <span>Perfil</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- Modal confirmar logout -->
+@if (mostrarConfirmarLogout()) {
+  <div class="overlay" (click)="mostrarConfirmarLogout.set(false)">
+    <div class="sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div style="text-align:center;padding:8px 0 16px">
+        <div style="font-size:2.5rem;margin-bottom:12px">🚪</div>
+        <div class="sheet-titulo">¿Cerrar sesión?</div>
+        <div style="color:#6d6d72;font-size:.88rem;margin-top:8px">Tendrás que volver a ingresar.</div>
+      </div>
+      <div class="sheet-acciones">
+        <button class="btn-sec" (click)="mostrarConfirmarLogout.set(false)">Cancelar</button>
+        <button class="btn-logout-confirm" (click)="confirmarLogout()">Sí, salir</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Toast -->
+@if (toast()) {
+  <div class="toast">{{ toast() }}</div>
+}
