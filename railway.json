@@ -8,5 +8,8 @@
     "startCommand": "node server.js",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE"
+  },
+  "environment": {
+    "NODE_VERSION": "22.12.0"
   }
 }
