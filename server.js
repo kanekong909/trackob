@@ -2,19 +2,16 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-// Puerto - Railway asigna el puerto automáticamente
-const port = process.env.PORT || 8080;
+const PORT = process.env.PORT || 4200;
+const DIST = path.join(__dirname, 'dist/trackob/browser');
 
-// Servir archivos estáticos de Angular
-const distPath = path.join(__dirname, 'dist/trackob/browser');
-app.use(express.static(distPath));
+app.use(express.static(DIST));
 
-// Redirigir todas las rutas a index.html (SPA)
+// SPA routing — todas las rutas apuntan al index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+  res.sendFile(path.join(DIST, 'index.html'));
 });
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${port}`);
-  console.log(`📁 Serving from: ${distPath}`);
+app.listen(PORT, () => {
+  console.log(`TrackOb corriendo en puerto ${PORT}`);
 });
