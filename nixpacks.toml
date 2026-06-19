@@ -1,0 +1,12 @@
+[phases.setup]
+nixPkgs = ["nodejs"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["npm run build:prod"]
+
+[start]
+# Usar server.js en lugar de ng serve
+cmd = "node server.js"
