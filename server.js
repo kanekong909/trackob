@@ -2,16 +2,15 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-const PORT = process.env.PORT || 4200;
-const DIST = path.join(__dirname, 'dist/trackob/browser');
+// Servir archivos estáticos desde la carpeta de distribución
+app.use(express.static(path.join(__dirname, 'dist')));
 
-app.use(express.static(DIST));
-
-// SPA routing compatible con Express 5 / path-to-regexp nuevo
-app.get('/(.*)', (req, res) => {
-  res.sendFile(path.join(DIST, 'index.html'));
+// Manejar todas las rutas - el comodín debe tener un nombre
+app.get('/*splat', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`TrackOb corriendo en puerto ${PORT}`);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Servidor corriendo en el puerto ${port}`);
 });
