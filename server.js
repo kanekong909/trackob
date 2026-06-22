@@ -7,8 +7,8 @@ const DIST = path.join(__dirname, 'dist/trackob/browser');
 
 app.use(express.static(DIST));
 
-// SPA routing — todas las rutas apuntan al index.html
-app.get('*', (req, res) => {
+// SPA routing compatible con Express 5 / path-to-regexp nuevo
+app.get('/(.*)', (req, res) => {
   res.sendFile(path.join(DIST, 'index.html'));
 });
 
