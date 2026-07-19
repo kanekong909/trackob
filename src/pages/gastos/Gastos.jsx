@@ -5,8 +5,10 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, formatDate } from '../../utils/format';
 import { downloadBlob } from '../../utils/download';
+import { useDisplayCurrency } from '../../hooks/useDisplayCurrency';
 import Button from '../../components/ui/Button';
 import Field from '../../components/ui/Field';
+import DivisaToggle from '../../components/ui/DivisaToggle';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import GastoRow from './GastoRow';
 import GastoModal from './GastoModal';
@@ -22,6 +24,7 @@ export default function Gastos() {
   const [categorias, setCategorias] = useState([]);
   const [miRol, setMiRol] = useState(null);
   const [moneda, setMoneda] = useState('COP');
+  const { verEn, setVerEn, divisaActiva, mostrar } = useDisplayCurrency(moneda);
   const [rolError, setRolError] = useState(false);
   const [suma, setSuma] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -87,15 +90,28 @@ export default function Gastos() {
     );
   }, [gastos, busqueda]);
 
+  // Copia SOLO para mostrar en pantalla — los montos reales (gastos,
+  // gastosFiltrados) nunca se tocan, así que editar/eliminar sigue
+  // trabajando siempre con la divisa nativa guardada en la BD.
+  const gastosMostrados = useMemo(() => {
+    if (!verEn || verEn === moneda) return gastosFiltrados;
+    return gastosFiltrados.map((g) => ({
+      ...g,
+      monto: mostrar(g.monto),
+      valor_unitario: g.valor_unitario ? mostrar(g.valor_unitario) : g.valor_unitario
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gastosFiltrados, verEn, moneda]);
+
   const grupos = useMemo(() => {
     const map = new Map();
-    for (const g of gastosFiltrados) {
+    for (const g of gastosMostrados) {
       const key = g.fecha?.split('T')[0];
       if (!map.has(key)) map.set(key, []);
       map.get(key).push(g);
     }
     return Array.from(map.entries());
-  }, [gastosFiltrados]);
+  }, [gastosMostrados]);
 
   function toggleSelect(id) {
     setSeleccion((prev) => {
@@ -119,8 +135,11 @@ export default function Gastos() {
   }
 
   function abrirEditar(gasto) {
+    // gasto puede venir de la lista "mostrada" (convertida) - siempre
+    // se edita sobre el registro real en su divisa nativa.
+    const original = gastos.find((g) => g.id === gasto.id) || gasto;
     setGastoDetalle(null);
-    setGastoEditando(gasto);
+    setGastoEditando(original);
     setModalOpen(true);
   }
 
@@ -192,9 +211,10 @@ export default function Gastos() {
       <header className={styles.header}>
         <div>
           <h1>Gastos</h1>
-          <p className={styles.total}>Total del periodo: <strong className={styles.num}>{formatCurrency(suma, moneda)}</strong></p>
+          <p className={styles.total}>Total del periodo: <strong className={styles.num}>{formatCurrency(mostrar(suma), divisaActiva)}</strong></p>
         </div>
         <div className={styles.headerActions}>
+          <DivisaToggle monedaNativa={moneda} verEn={verEn} onChange={setVerEn} />
           <Button variant="outline" onClick={exportarCSV} loading={exportando}>Exportar CSV</Button>
           <Button onClick={abrirNuevo}>+ Nuevo gasto</Button>
         </div>
@@ -275,7 +295,7 @@ export default function Gastos() {
               <GastoRow
                 key={g.id}
                 gasto={g}
-                moneda={moneda}
+                moneda={divisaActiva}
                 selected={seleccion.has(g.id)}
                 onToggleSelect={toggleSelect}
                 onEdit={abrirEditar}
@@ -302,7 +322,7 @@ export default function Gastos() {
         open={Boolean(gastoDetalle)}
         onClose={() => setGastoDetalle(null)}
         gasto={gastoDetalle}
-        moneda={moneda}
+        moneda={divisaActiva}
         puedeEditar={gastoDetalle ? puedeEditar(gastoDetalle) : false}
         onEdit={abrirEditar}
         onDelete={pedirEliminar}

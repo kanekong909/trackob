@@ -7,6 +7,7 @@
 .header {
   display: flex;
   align-items: flex-end;
+  flex-direction: column;
   justify-content: space-between;
   gap: var(--space-4);
   margin-bottom: var(--space-8);
@@ -120,4 +121,13 @@
   font-size: var(--text-xs);
   color: var(--steel-light);
   margin-top: calc(var(--space-4) * -1 + var(--space-1));
+}
+
+.monedaWarning {
+  background: var(--danger-dim);
+  color: var(--danger);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  line-height: 1.5;
 }

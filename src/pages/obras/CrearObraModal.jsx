@@ -6,6 +6,7 @@ import { api } from '../../api/client';
 import { useToast } from '../../context/ToastContext';
 import { MONEDAS } from '../../utils/format';
 import styles from './Obras.module.css';
+import { formatMiles, formatQty, parseMiles } from '../../utils/format';
 
 export default function CrearObraModal({ open, onClose, onCreated }) {
   const toast = useToast();
@@ -49,6 +50,10 @@ export default function CrearObraModal({ open, onClose, onCreated }) {
     }
   }
 
+  function updateMiles(field) {
+    return (e) => setForm((f) => ({ ...f, [field]: parseMiles(e.target.value) }))
+  }
+
   return (
     <Modal open={open} onClose={handleClose} title="Nueva obra">
       <form className={styles.formModal} onSubmit={handleSubmit}>
@@ -70,12 +75,11 @@ export default function CrearObraModal({ open, onClose, onCreated }) {
         <div className={styles.row2}>
           <Field
             label="Presupuesto"
-            type="number"
-            min="0"
-            step="1000"
+            type="text"
+            inputMode="numeric"
             placeholder="0"
-            value={form.presupuesto}
-            onChange={update('presupuesto')}
+            value={formatMiles(form.presupuesto)}
+            onChange={updateMiles('presupuesto')}
           />
           <Field as="select" label="Divisa" value={form.moneda} onChange={update('moneda')}>
             {Object.entries(MONEDAS).map(([code, cfg]) => (

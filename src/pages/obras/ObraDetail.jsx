@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../api/client';
 import { formatCurrency } from '../../utils/format';
+import Button from '../../components/ui/Button';
+import DivisaToggle from '../../components/ui/DivisaToggle';
+import EditarObraModal from './EditarObraModal';
+import { useDisplayCurrency } from '../../hooks/useDisplayCurrency';
 import styles from './ObraDetail.module.css';
 
 export default function ObraDetail() {
@@ -9,15 +13,21 @@ export default function ObraDetail() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editando, setEditando] = useState(false);
 
-  useEffect(() => {
+  const cargar = useCallback(() => {
     setLoading(true);
     setError('');
-    api.get(`/api/obras/${id}/resumen`)
+    return api.get(`/api/obras/${id}/resumen`)
       .then(setData)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => { cargar(); }, [cargar]);
+
+  const moneda = data?.obra?.moneda || 'COP';
+  const { verEn, setVerEn, divisaActiva, mostrar } = useDisplayCurrency(moneda);
 
   if (loading) return <div className={styles.state}>Cargando resumen…</div>;
   if (error) return <div className={styles.stateError}>{error}</div>;
@@ -29,25 +39,39 @@ export default function ObraDetail() {
   const restante = presupuesto - gastado;
   const pct = presupuesto > 0 ? Math.min(100, (gastado / presupuesto) * 100) : 0;
   const sobrepasado = presupuesto > 0 && gastado > presupuesto;
-  const moneda = obra.moneda || 'COP';
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>{obra.ubicacion || 'Sin ubicación'} · {moneda}</p>
-        <h1>{obra.nombre}</h1>
-        {obra.descripcion && <p className={styles.desc}>{obra.descripcion}</p>}
+        <div>
+          <p className={styles.eyebrow}>{obra.ubicacion || 'Sin ubicación'} · {moneda}</p>
+          <h1>{obra.nombre}</h1>
+          {obra.descripcion && <p className={styles.desc}>{obra.descripcion}</p>}
+        </div>
+        <div className={styles.headerActions}>
+          <DivisaToggle monedaNativa={moneda} verEn={verEn} onChange={setVerEn} />
+          {data.mi_rol === 'admin' && (
+            <Button variant="outline" onClick={() => setEditando(true)}>Editar obra</Button>
+          )}
+        </div>
       </header>
+
+      <EditarObraModal
+        open={editando}
+        onClose={() => setEditando(false)}
+        obra={obra}
+        onSaved={cargar}
+      />
 
       <section className={styles.tapeCard}>
         <div className={styles.tapeRow}>
           <div>
             <span className={styles.tapeLabel}>Gastado</span>
-            <p className={`${styles.tapeValue} ${sobrepasado ? styles.over : ''}`}>{formatCurrency(gastado, moneda)}</p>
+            <p className={`${styles.tapeValue} ${sobrepasado ? styles.over : ''}`}>{formatCurrency(mostrar(gastado), divisaActiva)}</p>
           </div>
           <div className={styles.tapeRight}>
             <span className={styles.tapeLabel}>Presupuesto</span>
-            <p className={styles.tapeValue}>{presupuesto > 0 ? formatCurrency(presupuesto, moneda) : '—'}</p>
+            <p className={styles.tapeValue}>{presupuesto > 0 ? formatCurrency(mostrar(presupuesto), divisaActiva) : '—'}</p>
           </div>
         </div>
         <div className={styles.tapeTrack}>
@@ -59,8 +83,8 @@ export default function ObraDetail() {
         <p className={`${styles.tapeFooter} ${sobrepasado ? styles.over : ''}`}>
           {presupuesto > 0
             ? sobrepasado
-              ? `Excedido por ${formatCurrency(Math.abs(restante), moneda)}`
-              : `Disponible: ${formatCurrency(restante, moneda)}`
+              ? `Excedido por ${formatCurrency(mostrar(Math.abs(restante)), divisaActiva)}`
+              : `Disponible: ${formatCurrency(mostrar(restante), divisaActiva)}`
             : 'Todavía no has definido un presupuesto para esta obra'}
         </p>
       </section>
@@ -76,7 +100,7 @@ export default function ObraDetail() {
         </div>
         {Number(totales.total_ingresos) > 0 && (
           <div className={styles.statCard}>
-            <span className={`${styles.statNum} ${styles.success}`}>{formatCurrency(totales.total_ingresos, moneda)}</span>
+            <span className={`${styles.statNum} ${styles.success}`}>{formatCurrency(mostrar(totales.total_ingresos), divisaActiva)}</span>
             <span className={styles.statLabel}>Ingresos / capital</span>
           </div>
         )}
@@ -95,7 +119,7 @@ export default function ObraDetail() {
                   <div className={styles.catBar}>
                     <div className={styles.catBarFill} style={{ width: `${catPct}%`, background: cat.color }} />
                   </div>
-                  <span className={styles.catAmount}>{formatCurrency(cat.total, moneda)}</span>
+                  <span className={styles.catAmount}>{formatCurrency(mostrar(cat.total), divisaActiva)}</span>
                 </div>
               );
             })}

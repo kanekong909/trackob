@@ -11,6 +11,7 @@ import ObraDetail from './pages/obras/ObraDetail';
 import Gastos from './pages/gastos/Gastos';
 import Tareas from './pages/tareas/Tareas';
 import Novedades from './pages/novedades/Novedades';
+import Progreso from './pages/progreso/Progreso';
 
 export default function App() {
   return (
@@ -33,7 +34,7 @@ export default function App() {
               <Route path="/obras/:id/gastos" element={<Gastos />} />
               <Route path="/obras/:id/tareas" element={<Tareas />} />
               <Route path="/obras/:id/novedades" element={<Novedades />} />
-              <Route path="/obras/:id/progreso" element={<ComingSoon label="Avance fotográfico" />} />
+              <Route path="/obras/:id/progreso" element={<Progreso />} />
               <Route path="/obras/:id/bitacora" element={<ComingSoon label="Bitácora" />} />
             </Route>
 
