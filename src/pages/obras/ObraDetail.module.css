@@ -1,0 +1,226 @@
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+}
+
+.state, .stateError {
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+  color: var(--steel);
+}
+.stateError { color: var(--danger); }
+
+.header { margin-bottom: var(--space-6); }
+
+.eyebrow {
+  font-size: var(--text-sm);
+  color: var(--steel);
+  font-weight: 500;
+}
+
+.header h1 {
+  font-size: var(--text-3xl);
+  margin: 2px 0 var(--space-2);
+}
+
+.desc {
+  color: var(--steel);
+  max-width: 560px;
+}
+
+.tapeCard {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.tapeRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.tapeRow > div {
+  min-width: 0;
+}
+
+.tapeRight { text-align: right; }
+
+.tapeLabel {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.5);
+}
+
+.tapeValue {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  margin-top: 4px;
+  overflow-wrap: break-word;
+}
+
+.over { color: #FF9B7A; }
+
+.tapeTrack {
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.12);
+  overflow: hidden;
+}
+
+.tapeFill {
+  height: 100%;
+  background: var(--safety);
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+.tapeFillOver { background: #FF9B7A; }
+
+.tapeFooter {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.7);
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.statCard {
+  background: var(--paper);
+  border: 1px solid var(--concrete-dim);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statNum {
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+
+.success { color: var(--success); }
+
+.statLabel {
+  font-size: var(--text-sm);
+  color: var(--steel);
+}
+
+.section {
+  margin-bottom: var(--space-8);
+}
+
+.section h2 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-4);
+}
+
+.catList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.catRow {
+  display: grid;
+  grid-template-columns: 10px 120px 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.catDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.catName {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catBar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--concrete-dim);
+  overflow: hidden;
+}
+
+.catBarFill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.catAmount {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.team {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.teamMember {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--paper);
+  border: 1px solid var(--concrete-dim);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+
+.teamAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--blueprint-dim);
+  color: var(--blueprint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.teamName {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.teamRole {
+  font-size: var(--text-xs);
+  color: var(--steel);
+}
+
+@media (max-width: 640px) {
+  .page { padding: var(--space-6) var(--space-4); }
+  .catRow { grid-template-columns: 10px 90px 1fr auto; }
+
+  .tapeRow {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .tapeRight { text-align: left; }
+  .tapeValue { font-size: var(--text-xl); }
+}

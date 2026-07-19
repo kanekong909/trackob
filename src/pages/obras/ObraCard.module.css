@@ -1,0 +1,127 @@
+.card {
+  display: block;
+  background: var(--paper);
+  border: 1px solid var(--concrete-dim);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--steel-light);
+  transform: translateY(-2px);
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.name {
+  font-size: var(--text-lg);
+  margin-bottom: 2px;
+}
+
+.location {
+  font-size: var(--text-sm);
+  color: var(--steel);
+}
+
+.roleBadge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--concrete);
+  color: var(--steel);
+}
+
+.roleAdmin {
+  background: var(--blueprint-dim);
+  color: var(--blueprint);
+}
+
+.tapeBlock {
+  margin-bottom: var(--space-4);
+}
+
+.tapeLabels {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.tapeLabels .num {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.over {
+  color: var(--danger);
+}
+
+.tapeLabelMuted {
+  font-size: var(--text-xs);
+  color: var(--steel);
+}
+
+.tapeEquivalente {
+  font-size: var(--text-xs);
+  color: var(--steel-light);
+  font-family: var(--font-mono);
+  margin-top: -2px;
+}
+
+.tapeTrack {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--concrete-dim);
+  overflow: hidden;
+}
+
+.tapeFill {
+  height: 100%;
+  background: var(--safety);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.tapeFillOver {
+  background: var(--danger);
+}
+
+.stats {
+  display: flex;
+  gap: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--concrete-dim);
+}
+
+.stat {
+  font-size: var(--text-sm);
+  color: var(--steel);
+}
+
+.stat .num {
+  color: var(--ink);
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.pending {
+  color: var(--warning);
+}

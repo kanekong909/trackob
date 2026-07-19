@@ -1,0 +1,127 @@
+.wrap {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.brand {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  padding: var(--space-12);
+  overflow: hidden;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle at 30% 30%, black 0%, transparent 75%);
+}
+
+.brandContent {
+  position: relative;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.logoMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--safety);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+
+.logoName {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  letter-spacing: -0.01em;
+}
+
+.headline {
+  font-size: var(--text-3xl);
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+.sub {
+  color: rgba(255,255,255,0.65);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.tape {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.55);
+}
+
+.tapeFill {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.tapeFill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 62%;
+  background: var(--safety);
+  border-radius: 3px;
+}
+
+.panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--concrete);
+  padding: var(--space-6);
+}
+
+.panelInner {
+  width: 100%;
+  max-width: 380px;
+}
+
+@media (max-width: 860px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+  .brand {
+    padding: var(--space-8) var(--space-6);
+    min-height: 220px;
+  }
+  .headline { font-size: var(--text-2xl); }
+  .sub { display: none; }
+  .tape { display: none; }
+}

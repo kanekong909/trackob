@@ -1,0 +1,112 @@
+.bottomNav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .bottomNav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--bottomnav-h);
+    background: var(--ink);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    z-index: 40;
+    padding: 0 var(--space-1);
+  }
+
+  .item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: rgba(255,255,255,0.55);
+    background: transparent;
+    border: none;
+    font-family: inherit;
+  }
+
+  .icon { font-size: var(--text-base); }
+  .label { font-size: 9.5px; font-weight: 600; }
+
+  .iconWrap { position: relative; }
+
+  .dot {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: 1.5px solid var(--ink);
+  }
+
+  .active { color: var(--safety); }
+}
+
+.overlay {
+  display: none;
+}
+
+.sheet {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(22, 35, 47, 0.4);
+    z-index: 45;
+  }
+
+  .sheet {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: var(--space-3);
+    right: var(--space-3);
+    bottom: calc(var(--bottomnav-h) + var(--space-2));
+    background: var(--ink);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-2);
+    z-index: 46;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .sheetOpen {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .sheetItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    color: rgba(255,255,255,0.85);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+  }
+
+  .sheetItem:hover, .sheetItem:active {
+    background: var(--ink-soft);
+  }
+
+  .sheetItem .icon {
+    font-size: var(--text-lg);
+    width: 24px;
+    text-align: center;
+  }
+}
