@@ -47,6 +47,20 @@
   .filters { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* Para móviles - CAMBIO PRINCIPAL */
+@media (max-width: 600px) {
+  .filters { 
+    grid-template-columns: 1fr;  /* ← Una sola columna */
+    gap: var(--space-3);
+  }
+  
+  /* Los selects y inputs ocupan todo el ancho */
+  .filters select,
+  .filters input {
+    width: 100%;
+  }
+}
+
 .state, .stateError {
   padding: var(--space-6);
   text-align: center;
