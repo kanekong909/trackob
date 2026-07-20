@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
 
-const POLL_MS = 20000;
+const POLL_MS = 5000;
 
 export function useNovedadesPendientes(obraId) {
   const [count, setCount] = useState(0);

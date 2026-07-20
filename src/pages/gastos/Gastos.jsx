@@ -13,6 +13,7 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import GastoRow from './GastoRow';
 import GastoModal from './GastoModal';
 import GastoDetailModal from './GastoDetailModal';
+import CategoriasModal from './CategoriasModal';
 import styles from './Gastos.module.css';
 
 export default function Gastos() {
@@ -40,6 +41,7 @@ export default function Gastos() {
   const [eliminando, setEliminando] = useState(false);
   const [bulkCategoria, setBulkCategoria] = useState('');
   const [exportando, setExportando] = useState(false);
+  const [categoriasModalOpen, setCategoriasModalOpen] = useState(false);
 
   // mi_rol depends only on the obra, not on filters - load it once here so
   // it's never stuck as null due to the gastos-loading effect below.
@@ -129,6 +131,10 @@ export default function Gastos() {
     return miRol === 'admin' || Number(gasto.usuario_id) === Number(usuario?.id);
   }
 
+  function recargarCategorias() {
+    api.get(`/api/gastos/categorias?obra_id=${obraId}`).then(setCategorias).catch(() => {});
+  }
+
   function abrirNuevo() {
     setGastoEditando(null);
     setModalOpen(true);
@@ -215,6 +221,7 @@ export default function Gastos() {
         </div>
         <div className={styles.headerActions}>
           <DivisaToggle monedaNativa={moneda} verEn={verEn} onChange={setVerEn} />
+          <Button variant="outline" onClick={() => setCategoriasModalOpen(true)}>⚙ Categorías</Button>
           <Button variant="outline" onClick={exportarCSV} loading={exportando}>Exportar CSV</Button>
           <Button onClick={abrirNuevo}>+ Nuevo gasto</Button>
         </div>
@@ -326,6 +333,13 @@ export default function Gastos() {
         puedeEditar={gastoDetalle ? puedeEditar(gastoDetalle) : false}
         onEdit={abrirEditar}
         onDelete={pedirEliminar}
+      />
+
+      <CategoriasModal
+        open={categoriasModalOpen}
+        onClose={() => setCategoriasModalOpen(false)}
+        obraId={obraId}
+        onChanged={recargarCategorias}
       />
 
       <ConfirmDialog

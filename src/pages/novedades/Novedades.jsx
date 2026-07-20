@@ -9,7 +9,7 @@ import NovedadCard from './NovedadCard';
 import NovedadModal from './NovedadModal';
 import styles from './Novedades.module.css';
 
-const REFRESH_MS = 15000;
+const REFRESH_MS = 5000;
 const FILTROS = [
   { value: '', label: 'Todas' },
   { value: 'pendiente', label: 'Pendientes' },

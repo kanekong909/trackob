@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
 import Field from '../../components/ui/Field';
+import PasswordField from '../../components/ui/PasswordField';
 import Button from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Auth.module.css';
@@ -50,9 +51,8 @@ export default function Login() {
           required
           autoComplete="email"
         />
-        <Field
+        <PasswordField
           label="Contraseña"
-          type="password"
           placeholder="••••••••"
           value={form.password}
           onChange={update('password')}

@@ -41,10 +41,15 @@ export function cloudinaryThumb(url, ancho = 400) {
 export function formatCurrency(value, moneda = 'COP') {
   const n = Number(value) || 0;
   const cfg = MONEDAS[moneda] || MONEDAS.COP;
+  // Si el monto redondea a 0 en la divisa de destino (típico al
+  // convertir montos chicos de COP a USD/EUR), mostramos 2 decimales
+  // para que no desaparezca como "$0" cuando en realidad sí vale algo.
+  const decimales = n !== 0 && Math.round(n) === 0 ? 2 : 0;
   return new Intl.NumberFormat(cfg.locale, {
     style: 'currency',
     currency: moneda,
-    maximumFractionDigits: 0
+    minimumFractionDigits: decimales,
+    maximumFractionDigits: decimales
   }).format(n);
 }
 
