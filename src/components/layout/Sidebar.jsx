@@ -1,6 +1,7 @@
 import { NavLink, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNovedadesPendientes } from '../../hooks/useNovedadesPendientes';
+import { useMiRolObra } from '../../hooks/useMiRolObra';
 import styles from './Sidebar.module.css';
 
 const NAV_ITEMS = [
@@ -16,6 +17,7 @@ export default function Sidebar() {
   const { usuario, logout } = useAuth();
   const { id } = useParams();
   const pendientes = useNovedadesPendientes(id);
+  const { esAdmin } = useMiRolObra(id);
 
   return (
     <aside className={styles.sidebar}>
@@ -24,9 +26,11 @@ export default function Sidebar() {
         <span className={styles.logoName}>TrackOb</span>
       </div>
 
-      <NavLink to="/obras" end className={styles.allObras}>
-        ← Todas las obras
-      </NavLink>
+      {id && (
+        <NavLink to="/obras" end className={styles.allObras}>
+          ← Todas las obras
+        </NavLink>
+      )}
 
       {id && (
         <nav className={styles.nav}>
@@ -42,6 +46,15 @@ export default function Sidebar() {
               {item.badge && pendientes > 0 && <span className={styles.navBadge}>{pendientes}</span>}
             </NavLink>
           ))}
+          {esAdmin && (
+            <NavLink
+              to={`/obras/${id}/auditoria`}
+              className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
+            >
+              <span className={styles.icon}>🔍</span>
+              Actividad
+            </NavLink>
+          )}
         </nav>
       )}
 

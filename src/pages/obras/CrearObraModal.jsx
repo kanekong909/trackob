@@ -4,9 +4,8 @@ import Field from '../../components/ui/Field';
 import Button from '../../components/ui/Button';
 import { api } from '../../api/client';
 import { useToast } from '../../context/ToastContext';
-import { MONEDAS } from '../../utils/format';
+import { MONEDAS, formatMiles, parseMiles } from '../../utils/format';
 import styles from './Obras.module.css';
-import { formatMiles, formatQty, parseMiles } from '../../utils/format';
 
 export default function CrearObraModal({ open, onClose, onCreated }) {
   const toast = useToast();
@@ -16,6 +15,10 @@ export default function CrearObraModal({ open, onClose, onCreated }) {
 
   function update(field) {
     return (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+  }
+
+  function updateMiles(field) {
+    return (e) => setForm((f) => ({ ...f, [field]: parseMiles(e.target.value) }));
   }
 
   function handleClose() {
@@ -50,10 +53,6 @@ export default function CrearObraModal({ open, onClose, onCreated }) {
     }
   }
 
-  function updateMiles(field) {
-    return (e) => setForm((f) => ({ ...f, [field]: parseMiles(e.target.value) }))
-  }
-
   return (
     <Modal open={open} onClose={handleClose} title="Nueva obra">
       <form className={styles.formModal} onSubmit={handleSubmit}>
@@ -74,7 +73,7 @@ export default function CrearObraModal({ open, onClose, onCreated }) {
         />
         <div className={styles.row2}>
           <Field
-            label="Presupuesto"
+            label={`Presupuesto (${form.moneda})`}
             type="text"
             inputMode="numeric"
             placeholder="0"

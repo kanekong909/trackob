@@ -4,7 +4,7 @@ import Field from '../../components/ui/Field';
 import Button from '../../components/ui/Button';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import { formatDate } from '../../utils/format';
+import { formatDate, cloudinaryThumb } from '../../utils/format';
 import styles from './Progreso.module.css';
 
 export default function FotoDetailModal({ open, onClose, foto, etapasExistentes, onUpdated, onDelete }) {
@@ -44,7 +44,7 @@ export default function FotoDetailModal({ open, onClose, foto, etapasExistentes,
   return (
     <Modal open={open} onClose={onClose} title="Foto de avance">
       <div className={styles.detail}>
-        <img src={foto.foto_url} alt={foto.etapa || 'Avance de obra'} className={styles.detailFoto} />
+        <img src={cloudinaryThumb(foto.foto_url, 1000)} alt={foto.etapa || 'Avance de obra'} className={styles.detailFoto} />
 
         {editando ? (
           <form className={styles.formModal} onSubmit={guardar}>

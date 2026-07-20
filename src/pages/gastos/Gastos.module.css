@@ -271,9 +271,27 @@
   .page { padding: var(--space-6) var(--space-4); }
   .filters { grid-template-columns: 1fr; }
   .rowProveedor, .rowUser { display: none; }
-  .rowDesc { white-space: normal; }
   .row3 { grid-template-columns: 1fr 1fr; }
   .row3 > *:first-child { grid-column: 1 / -1; }
+
+  /* La fila pasa de flex a grid: así la descripción/categoría siempre
+     recibe un ancho real (1fr) en vez de que la aprieten el checkbox,
+     la foto y el monto — que antes la dejaban casi sin espacio y el
+     texto terminaba cortado letra por letra. */
+  .row {
+    display: grid;
+    grid-template-columns: 16px 36px 1fr auto;
+    align-items: start;
+    column-gap: var(--space-3);
+  }
+  .checkbox { margin-top: 3px; }
+  .rowMain { min-width: 0; }
+  .rowDesc { white-space: normal; }
+  .rowRight {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
 }
 
 /* ---- Modal form ---- */

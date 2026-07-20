@@ -29,6 +29,15 @@ export const MONEDAS = {
   EUR: { symbol: '€', locale: 'de-DE', nombre: 'Euro' }
 };
 
+// Pide una versión más liviana de una imagen de Cloudinary insertando
+// parámetros de transformación en la URL — no re-sube nada, es la misma
+// imagen servida en otro tamaño/calidad. Si la URL no es de Cloudinary
+// (o no hay URL), la devuelve tal cual.
+export function cloudinaryThumb(url, ancho = 400) {
+  if (!url || !url.includes('/upload/')) return url;
+  return url.replace('/upload/', `/upload/w_${ancho},c_fill,q_auto,f_auto/`);
+}
+
 export function formatCurrency(value, moneda = 'COP') {
   const n = Number(value) || 0;
   const cfg = MONEDAS[moneda] || MONEDAS.COP;

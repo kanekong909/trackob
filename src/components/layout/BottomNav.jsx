@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import { useNovedadesPendientes } from '../../hooks/useNovedadesPendientes';
+import { useMiRolObra } from '../../hooks/useMiRolObra';
 import styles from './BottomNav.module.css';
 
 const PRIMARY_ITEMS = [
@@ -19,18 +20,20 @@ export default function BottomNav() {
   const { id } = useParams();
   const location = useLocation();
   const pendientes = useNovedadesPendientes(id);
+  const { esAdmin } = useMiRolObra(id);
   const [masAbierto, setMasAbierto] = useState(false);
 
   if (!id) return null;
 
-  const enMasActivo = MORE_ITEMS.some((item) => location.pathname.endsWith(`/${item.to}`));
+  const masItems = esAdmin ? [...MORE_ITEMS, { to: 'auditoria', label: 'Actividad', icon: '🔍' }] : MORE_ITEMS;
+  const enMasActivo = masItems.some((item) => location.pathname.endsWith(`/${item.to}`));
 
   return (
     <>
       {masAbierto && <div className={styles.overlay} onClick={() => setMasAbierto(false)} />}
 
       <div className={`${styles.sheet} ${masAbierto ? styles.sheetOpen : ''}`}>
-        {MORE_ITEMS.map((item) => (
+        {masItems.map((item) => (
           <NavLink
             key={item.label}
             to={`/obras/${id}/${item.to}`}
