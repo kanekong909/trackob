@@ -15,7 +15,8 @@ import {
   NotebookText,
   History,
   ArrowLeft,
-  ClipboardList
+  ClipboardList,
+  Logs
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -110,7 +111,7 @@ export default function Sidebar() {
               to={`/obras/${id}/auditoria`}
               className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
             >
-              <ClipboardList size={20} />
+              <Logs size={20} />
               <span>Actividad</span>
             </NavLink>
           )}

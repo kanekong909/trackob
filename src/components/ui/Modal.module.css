@@ -45,34 +45,45 @@
 }
 .close:hover { background: var(--concrete-dim); color: var(--ink); }
 
+.header h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  color: var(--ink) !important;
+}
+
 .body {
   padding: var(--space-6);
 }
 
-/* En el mismo archivo o en uno específico */
-.darkPerfil {
-  background: #1a1a1a !important;
-  border: 1px solid #333 !important;
+/* BARRA SCROLL */
+.dialog {
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 460px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--steel-light) transparent;
 }
 
-.darkPerfil .header {
-  border-bottom: 1px solid #333 !important;
+/* Chrome, Edge y Safari */
+.dialog::-webkit-scrollbar {
+  width: 8px;
 }
 
-.darkPerfil .header h3 {
-  color: #ffffff !important;
+.dialog::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.darkPerfil .close {
-  color: #888 !important;
-  background: transparent !important;
+.dialog::-webkit-scrollbar-thumb {
+  background: var(--concrete-dim);
+  border-radius: 999px;
 }
 
-.darkPerfil .close:hover {
-  background: rgba(255,255,255,0.05) !important;
-  color: #ffffff !important;
-}
-
-.darkPerfil .body {
-  color: #e0e0e0 !important;
+.dialog::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
