@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import ObraCard from './ObraCard';
 import CrearObraModal from './CrearObraModal';
 import Button from '../../components/ui/Button';
+import PerfilModal from '../perfil/PerfilModal';
 import styles from './Obras.module.css';
 
 export default function Obras() {
@@ -12,6 +13,7 @@ export default function Obras() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [perfilOpen, setPerfilOpen] = useState(false);
 
   useEffect(() => { cargarObras(); }, []);
 
@@ -39,8 +41,15 @@ export default function Obras() {
           <p className={styles.eyebrow}>Hola, {usuario?.nombre?.split(' ')[0]}</p>
           <h1>Tus obras</h1>
         </div>
-        <Button onClick={() => setModalOpen(true)}>+ Nueva obra</Button>
+        <div className={styles.headerActions}>
+          <button className={styles.perfilBtn} onClick={() => setPerfilOpen(true)} aria-label="Mi perfil">
+            {usuario?.nombre?.[0]?.toUpperCase()}
+          </button>
+          <Button onClick={() => setModalOpen(true)}>+ Nueva obra</Button>
+        </div>
       </header>
+
+      <PerfilModal open={perfilOpen} onClose={() => setPerfilOpen(false)} />
 
       {loading && <div className={styles.state}>Cargando obras…</div>}
 

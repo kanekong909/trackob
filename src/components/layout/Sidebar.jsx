@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNovedadesPendientes } from '../../hooks/useNovedadesPendientes';
 import { useMiRolObra } from '../../hooks/useMiRolObra';
+import PerfilModal from '../../pages/perfil/PerfilModal';
+import { cloudinaryThumb } from '../../utils/format';
 import styles from './Sidebar.module.css';
 
 const NAV_ITEMS = [
@@ -17,13 +20,20 @@ export default function Sidebar() {
   const { usuario, logout } = useAuth();
   const { id } = useParams();
   const pendientes = useNovedadesPendientes(id);
-  const { esAdmin } = useMiRolObra(id);
+  const { esAdmin, obra } = useMiRolObra(id);
+  const [perfilOpen, setPerfilOpen] = useState(false);
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        <span className={styles.logoMark}>TO</span>
-        <span className={styles.logoName}>TrackOb</span>
+        {obra?.logo_empresa_url ? (
+          <img src={cloudinaryThumb(obra.logo_empresa_url, 160)} alt="" className={styles.logoEmpresa} />
+        ) : (
+          <>
+            <span className={styles.logoMark}>TO</span>
+            <span className={styles.logoName}>TrackOb</span>
+          </>
+        )}
       </div>
 
       {id && (
@@ -59,12 +69,18 @@ export default function Sidebar() {
       )}
 
       <div className={styles.footer}>
-        <div className={styles.user}>
-          <span className={styles.avatar}>{usuario?.nombre?.[0]?.toUpperCase()}</span>
+        <button className={styles.user} onClick={() => setPerfilOpen(true)}>
+          {usuario?.fondo_url ? (
+            <img src={cloudinaryThumb(usuario.fondo_url, 60)} alt="" className={styles.avatarImg} />
+          ) : (
+            <span className={styles.avatar}>{usuario?.nombre?.[0]?.toUpperCase()}</span>
+          )}
           <span className={styles.userName}>{usuario?.nombre}</span>
-        </div>
+        </button>
         <button className={styles.logout} onClick={logout}>Salir</button>
       </div>
+
+      <PerfilModal open={perfilOpen} onClose={() => setPerfilOpen(false)} />
     </aside>
   );
 }

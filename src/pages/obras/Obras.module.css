@@ -6,8 +6,7 @@
 
 .header {
   display: flex;
-  align-items: flex-start;
-  flex-direction: column;
+  align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-4);
   margin-bottom: var(--space-8);
@@ -23,6 +22,25 @@
 .header h1 {
   font-size: var(--text-3xl);
 }
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.perfilBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+.perfilBtn:hover { background: var(--ink-soft); }
 
 .grid {
   display: grid;

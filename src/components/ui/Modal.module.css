@@ -48,3 +48,31 @@
 .body {
   padding: var(--space-6);
 }
+
+/* En el mismo archivo o en uno específico */
+.darkPerfil {
+  background: #1a1a1a !important;
+  border: 1px solid #333 !important;
+}
+
+.darkPerfil .header {
+  border-bottom: 1px solid #333 !important;
+}
+
+.darkPerfil .header h3 {
+  color: #ffffff !important;
+}
+
+.darkPerfil .close {
+  color: #888 !important;
+  background: transparent !important;
+}
+
+.darkPerfil .close:hover {
+  background: rgba(255,255,255,0.05) !important;
+  color: #ffffff !important;
+}
+
+.darkPerfil .body {
+  color: #e0e0e0 !important;
+}

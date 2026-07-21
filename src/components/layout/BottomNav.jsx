@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import { useNovedadesPendientes } from '../../hooks/useNovedadesPendientes';
 import { useMiRolObra } from '../../hooks/useMiRolObra';
+import PerfilModal from '../../pages/perfil/PerfilModal';
 import styles from './BottomNav.module.css';
 
 const PRIMARY_ITEMS = [
@@ -22,6 +23,7 @@ export default function BottomNav() {
   const pendientes = useNovedadesPendientes(id);
   const { esAdmin } = useMiRolObra(id);
   const [masAbierto, setMasAbierto] = useState(false);
+  const [perfilOpen, setPerfilOpen] = useState(false);
 
   if (!id) return null;
 
@@ -44,6 +46,14 @@ export default function BottomNav() {
             {item.label}
           </NavLink>
         ))}
+        <button
+          type="button"
+          className={styles.sheetItem}
+          onClick={() => { setMasAbierto(false); setPerfilOpen(true); }}
+        >
+          <span className={styles.icon}>👤</span>
+          Mi perfil
+        </button>
       </div>
 
       <nav className={styles.bottomNav}>
@@ -70,6 +80,8 @@ export default function BottomNav() {
           <span className={styles.label}>Más</span>
         </button>
       </nav>
+
+      <PerfilModal open={perfilOpen} onClose={() => setPerfilOpen(false)} />
     </>
   );
 }

@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../api/client';
-import { formatCurrency } from '../../utils/format';
+import { formatCurrency, cloudinaryThumb } from '../../utils/format';
 import Button from '../../components/ui/Button';
 import DivisaToggle from '../../components/ui/DivisaToggle';
 import EditarObraModal from './EditarObraModal';
@@ -14,26 +14,30 @@ export default function ObraDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editando, setEditando] = useState(false);
+  const idRef = useRef(id);
+
+  useEffect(() => { idRef.current = id; }, [id]);
 
   const cargar = useCallback(() => {
+    const solicitando = id;
     setLoading(true);
     setError('');
     return api.get(`/api/obras/${id}/resumen`)
-      .then(setData)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .then((r) => { if (idRef.current === solicitando) setData(r); })
+      .catch((err) => { if (idRef.current === solicitando) setError(err.message); })
+      .finally(() => { if (idRef.current === solicitando) setLoading(false); });
   }, [id]);
 
   useEffect(() => { cargar(); }, [cargar]);
 
   const moneda = data?.obra?.moneda || 'COP';
-  const { verEn, setVerEn, divisaActiva, mostrar } = useDisplayCurrency(moneda);
+  const { verEn, setVerEn, divisaActiva, mostrar, revertir } = useDisplayCurrency(moneda);
 
   if (loading) return <div className={styles.state}>Cargando resumen…</div>;
   if (error) return <div className={styles.stateError}>{error}</div>;
-  if (!data) return null;
+  if (!data?.obra) return <div className={styles.stateError}>No se pudo cargar la información de esta obra.</div>;
 
-  const { obra, totales, por_categoria, colaboradores } = data;
+  const { obra, totales = {}, por_categoria, colaboradores } = data;
   const presupuesto = Number(obra.presupuesto) || 0;
   const gastado = Number(totales.total_gastado) || 0;
   const restante = presupuesto - gastado;
@@ -44,6 +48,9 @@ export default function ObraDetail() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div>
+          {obra.logo_empresa_url && (
+            <img src={cloudinaryThumb(obra.logo_empresa_url, 200)} alt="" className={styles.logoEmpresa} />
+          )}
           <p className={styles.eyebrow}>{obra.ubicacion || 'Sin ubicación'} · {moneda}</p>
           <h1>{obra.nombre}</h1>
           {obra.descripcion && <p className={styles.desc}>{obra.descripcion}</p>}
@@ -60,6 +67,9 @@ export default function ObraDetail() {
         open={editando}
         onClose={() => setEditando(false)}
         obra={obra}
+        divisaActiva={divisaActiva}
+        mostrar={mostrar}
+        revertir={revertir}
         onSaved={cargar}
       />
 

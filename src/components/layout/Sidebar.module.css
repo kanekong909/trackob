@@ -18,6 +18,12 @@
   padding: var(--space-2) var(--space-2) var(--space-5);
 }
 
+.logoEmpresa {
+  max-height: 36px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
 .logoMark {
   display: inline-flex;
   align-items: center;
@@ -115,6 +121,15 @@
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
+  background: transparent;
+  border: none;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+}
+.user:hover {
+  background: var(--ink-soft);
 }
 
 .avatar {
@@ -131,12 +146,21 @@
   font-size: var(--text-sm);
 }
 
+.avatarImg {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .userName {
   font-size: var(--text-sm);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: white;
 }
 
 .logout {
