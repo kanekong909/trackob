@@ -4,17 +4,54 @@ import { useNovedadesPendientes } from '../../hooks/useNovedadesPendientes';
 import { useMiRolObra } from '../../hooks/useMiRolObra';
 import PerfilModal from '../../pages/perfil/PerfilModal';
 import styles from './BottomNav.module.css';
+import {
+  LayoutDashboard,
+  Wallet,
+  CheckSquare,
+  BellRing,
+  ChartColumn,
+  NotebookText,
+  Logs,
+  UserRound,
+  Ellipsis,
+} from "lucide-react";
 
 const PRIMARY_ITEMS = [
-  { to: '', label: 'Resumen', icon: '◧', end: true },
-  { to: 'gastos', label: 'Gastos', icon: '✎' },
-  { to: 'tareas', label: 'Tareas', icon: '☑' },
-  { to: 'novedades', label: 'Novedades', icon: '⚠', badge: true }
+  {
+    to: "",
+    label: "Resumen",
+    icon: LayoutDashboard,
+    end: true,
+  },
+  {
+    to: "gastos",
+    label: "Gastos",
+    icon: Wallet,
+  },
+  {
+    to: "tareas",
+    label: "Tareas",
+    icon: CheckSquare,
+  },
+  {
+    to: "novedades",
+    label: "Novedades",
+    icon: BellRing,
+    badge: true,
+  },
 ];
 
 const MORE_ITEMS = [
-  { to: 'progreso', label: 'Avance', icon: '▤' },
-  { to: 'bitacora', label: 'Bitácora', icon: '≡' }
+  {
+    to: "progreso",
+    label: "Avance",
+    icon: ChartColumn,
+  },
+  {
+    to: "bitacora",
+    label: "Bitácora",
+    icon: NotebookText,
+  },
 ];
 
 export default function BottomNav() {
@@ -27,7 +64,7 @@ export default function BottomNav() {
 
   if (!id) return null;
 
-  const masItems = esAdmin ? [...MORE_ITEMS, { to: 'auditoria', label: 'Actividad', icon: '🔍' }] : MORE_ITEMS;
+  const masItems = esAdmin ? [...MORE_ITEMS, { to: 'auditoria', label: 'Actividad', icon: Logs }] : MORE_ITEMS;
   const enMasActivo = masItems.some((item) => location.pathname.endsWith(`/${item.to}`));
 
   return (
@@ -35,48 +72,64 @@ export default function BottomNav() {
       {masAbierto && <div className={styles.overlay} onClick={() => setMasAbierto(false)} />}
 
       <div className={`${styles.sheet} ${masAbierto ? styles.sheetOpen : ''}`}>
-        {masItems.map((item) => (
-          <NavLink
-            key={item.label}
-            to={`/obras/${id}/${item.to}`}
-            className={styles.sheetItem}
-            onClick={() => setMasAbierto(false)}
-          >
-            <span className={styles.icon}>{item.icon}</span>
-            {item.label}
-          </NavLink>
-        ))}
+        {masItems.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <NavLink
+              key={item.label}
+              to={`/obras/${id}/${item.to}`}
+              className={styles.sheetItem}
+              onClick={() => setMasAbierto(false)}
+            >
+              <Icon size={20} />
+              {item.label}
+            </NavLink>
+          );
+        })}
         <button
           type="button"
           className={styles.sheetItem}
           onClick={() => { setMasAbierto(false); setPerfilOpen(true); }}
         >
-          <span className={styles.icon}>👤</span>
+          <UserRound size={20} />
           Mi perfil
         </button>
       </div>
 
       <nav className={styles.bottomNav}>
-        {PRIMARY_ITEMS.map((item) => (
-          <NavLink
-            key={item.label}
-            to={`/obras/${id}${item.to ? `/${item.to}` : ''}`}
-            end={item.end}
-            className={({ isActive }) => `${styles.item} ${isActive ? styles.active : ''}`}
-          >
-            <span className={styles.iconWrap}>
-              <span className={styles.icon}>{item.icon}</span>
-              {item.badge && pendientes > 0 && <span className={styles.dot} />}
-            </span>
-            <span className={styles.label}>{item.label}</span>
-          </NavLink>
-        ))}
+        {PRIMARY_ITEMS.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <NavLink
+              key={item.label}
+              to={`/obras/${id}${item.to ? `/${item.to}` : ""}`}
+              end={item.end}
+              className={({ isActive }) =>
+                `${styles.item} ${isActive ? styles.active : ""}`
+              }
+            >
+              <span className={styles.iconWrap}>
+                <Icon size={20} />
+
+                {item.badge && pendientes > 0 && (
+                  <span className={styles.dot} />
+                )}
+              </span>
+
+              <span className={styles.label}>
+                {item.label}
+              </span>
+            </NavLink>
+          );
+        })}
         <button
           type="button"
           className={`${styles.item} ${enMasActivo ? styles.active : ''}`}
           onClick={() => setMasAbierto((v) => !v)}
         >
-          <span className={styles.icon}>⋯</span>
+          <Ellipsis size={20} />
           <span className={styles.label}>Más</span>
         </button>
       </nav>
