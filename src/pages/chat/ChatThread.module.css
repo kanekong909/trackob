@@ -1,0 +1,116 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.mensajes {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 62vh;
+}
+
+.compact .mensajes {
+  max-height: 220px;
+  padding: var(--space-3);
+}
+
+.state, .stateError, .empty {
+  text-align: center;
+  color: var(--steel);
+  font-size: var(--text-sm);
+  padding: var(--space-4);
+}
+
+.stateError { color: var(--danger); }
+
+.bubbleRow {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.bubbleRowMio {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 78%;
+  background: var(--concrete);
+  border-radius: var(--radius-md);
+  border-bottom-left-radius: 2px;
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bubbleMio {
+  background: var(--blueprint);
+  color: var(--paper);
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: 2px;
+}
+
+.autor {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blueprint);
+}
+
+.bubbleMio .autor {
+  color: rgba(255,255,255,0.85);
+}
+
+.texto {
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.hora {
+  font-size: 10px;
+  color: var(--steel-light);
+  align-self: flex-end;
+}
+
+.bubbleMio .hora {
+  color: rgba(255,255,255,0.65);
+}
+
+.inputRow {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-top: 1px solid var(--concrete-dim);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: 1.5px solid var(--concrete-dim);
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  background: var(--paper);
+}
+.input:focus { border-color: var(--blueprint); outline: none; }
+
+.sendBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--safety);
+  color: var(--paper);
+  border: none;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.sendBtn:disabled { opacity: 0.4; }

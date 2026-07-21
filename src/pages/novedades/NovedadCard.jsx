@@ -1,12 +1,14 @@
 import { useState } from 'react';
+import ChatThread from '../chat/ChatThread';
 import styles from './Novedades.module.css';
 
 function formatFechaHora(iso) {
   return new Date(iso).toLocaleString('es-CO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
 
-export default function NovedadCard({ novedad, esAdmin, puedeEliminar, onMarcarEstado, onEliminar }) {
+export default function NovedadCard({ novedad, obraId, esAdmin, puedeEliminar, onMarcarEstado, onEliminar }) {
   const [fotoAbierta, setFotoAbierta] = useState(false);
+  const [comentariosAbiertos, setComentariosAbiertos] = useState(false);
   const resuelta = novedad.estado === 'resuelta';
 
   return (
@@ -52,10 +54,17 @@ export default function NovedadCard({ novedad, esAdmin, puedeEliminar, onMarcarE
             {resuelta ? 'Reabrir' : 'Marcar como resuelta'}
           </button>
         )}
+        <button className={styles.comentariosBtn} onClick={() => setComentariosAbiertos((v) => !v)}>
+          💬 {comentariosAbiertos ? 'Ocultar comentarios' : 'Comentarios'}
+        </button>
         {puedeEliminar && (
           <button className={styles.deleteBtn} onClick={() => onEliminar(novedad)}>Eliminar</button>
         )}
       </div>
+
+      {comentariosAbiertos && (
+        <ChatThread obraId={obraId} novedadId={novedad.id} compact placeholder="Comentar sobre esta novedad…" />
+      )}
     </div>
   );
 }

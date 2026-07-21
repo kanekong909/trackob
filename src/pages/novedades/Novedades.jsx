@@ -156,6 +156,7 @@ export default function Novedades() {
             <NovedadCard
               key={n.id}
               novedad={n}
+              obraId={obraId}
               esAdmin={esAdmin}
               puedeEliminar={puedeEliminar(n)}
               onMarcarEstado={marcarEstado}

@@ -11,11 +11,9 @@ import {
   Wallet,
   CheckSquare,
   BellRing,
+  MessageCircle,
   ChartColumn,
   NotebookText,
-  History,
-  ArrowLeft,
-  ClipboardList,
   Logs
 } from "lucide-react";
 
@@ -41,6 +39,11 @@ const NAV_ITEMS = [
     label: "Novedades",
     icon: BellRing,
     badge: true
+  },
+  {
+    to: "chat",
+    label: "Chat",
+    icon: MessageCircle
   },
   {
     to: "progreso",

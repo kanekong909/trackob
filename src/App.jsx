@@ -13,6 +13,7 @@ import Novedades from './pages/novedades/Novedades';
 import Progreso from './pages/progreso/Progreso';
 import Bitacora from './pages/bitacora/Bitacora';
 import Auditoria from './pages/auditoria/Auditoria';
+import Chat from './pages/chat/Chat';
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
               <Route path="/obras/:id/progreso" element={<Progreso />} />
               <Route path="/obras/:id/bitacora" element={<Bitacora />} />
               <Route path="/obras/:id/auditoria" element={<Auditoria />} />
+              <Route path="/obras/:id/chat" element={<Chat />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/obras" replace />} />

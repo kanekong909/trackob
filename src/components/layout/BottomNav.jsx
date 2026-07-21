@@ -9,11 +9,12 @@ import {
   Wallet,
   CheckSquare,
   BellRing,
+  MessageCircle,
   ChartColumn,
   NotebookText,
   Logs,
   UserRound,
-  Ellipsis,
+  Ellipsis
 } from "lucide-react";
 
 const PRIMARY_ITEMS = [
@@ -51,6 +52,11 @@ const MORE_ITEMS = [
     to: "bitacora",
     label: "Bitácora",
     icon: NotebookText,
+  },
+  {
+    to: "chat",
+    label: "Chat",
+    icon: MessageCircle,
   },
 ];
 

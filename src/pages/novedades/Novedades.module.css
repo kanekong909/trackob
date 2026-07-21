@@ -10,7 +10,6 @@
 .header {
   display: flex;
   align-items: flex-start;
-  flex-direction: column;
   justify-content: space-between;
   gap: var(--space-4);
 }
@@ -185,6 +184,17 @@
   font-size: var(--text-xs);
   font-weight: 700;
 }
+
+.comentariosBtn {
+  background: var(--concrete);
+  color: var(--steel);
+  border: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+.comentariosBtn:hover { background: var(--concrete-dim); }
 
 .reabrirBtn {
   background: var(--warning-dim);
