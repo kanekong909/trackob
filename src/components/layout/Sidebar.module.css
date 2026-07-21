@@ -177,3 +177,21 @@
 @media (max-width: 900px) {
   .sidebar { display: none; }
 }
+
+
+/* ICONOS */
+.navItem{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.navItem svg{
+    flex-shrink:0;
+    width:20px;
+    height:20px;
+}
+
+.active svg{
+    color:var(--primary);
+}

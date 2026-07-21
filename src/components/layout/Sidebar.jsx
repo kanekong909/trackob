@@ -6,14 +6,50 @@ import { useMiRolObra } from '../../hooks/useMiRolObra';
 import PerfilModal from '../../pages/perfil/PerfilModal';
 import { cloudinaryThumb } from '../../utils/format';
 import styles from './Sidebar.module.css';
+import {
+  LayoutDashboard,
+  Wallet,
+  CheckSquare,
+  BellRing,
+  ChartColumn,
+  NotebookText,
+  History,
+  ArrowLeft
+} from "lucide-react";
 
 const NAV_ITEMS = [
-  { to: '', label: 'Resumen', icon: '◧', end: true },
-  { to: 'gastos', label: 'Gastos', icon: '✎' },
-  { to: 'tareas', label: 'Tareas', icon: '☑' },
-  { to: 'novedades', label: 'Novedades', icon: '⚠', badge: true },
-  { to: 'progreso', label: 'Avance', icon: '▤' },
-  { to: 'bitacora', label: 'Bitácora', icon: '≡' }
+  {
+    to: "",
+    label: "Resumen",
+    icon: LayoutDashboard,
+    end: true
+  },
+  {
+    to: "gastos",
+    label: "Gastos",
+    icon: Wallet
+  },
+  {
+    to: "tareas",
+    label: "Tareas",
+    icon: CheckSquare
+  },
+  {
+    to: "novedades",
+    label: "Novedades",
+    icon: BellRing,
+    badge: true
+  },
+  {
+    to: "progreso",
+    label: "Avance",
+    icon: ChartColumn
+  },
+  {
+    to: "bitacora",
+    label: "Bitácora",
+    icon: NotebookText
+  }
 ];
 
 export default function Sidebar() {
@@ -44,25 +80,37 @@ export default function Sidebar() {
 
       {id && (
         <nav className={styles.nav}>
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.label}
-              to={`/obras/${id}${item.to ? `/${item.to}` : ''}`}
-              end={item.end}
-              className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
-            >
-              <span className={styles.icon}>{item.icon}</span>
-              {item.label}
-              {item.badge && pendientes > 0 && <span className={styles.navBadge}>{pendientes}</span>}
-            </NavLink>
-          ))}
+          {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                  <NavLink
+                      key={item.label}
+                      to={`/obras/${id}${item.to ? `/${item.to}` : ""}`}
+                      end={item.end}
+                      className={({ isActive }) =>
+                          `${styles.navItem} ${isActive ? styles.active : ""}`
+                      }
+                  >
+                      <Icon size={20} strokeWidth={2} />
+
+                      <span>{item.label}</span>
+
+                      {item.badge && pendientes > 0 && (
+                          <span className={styles.navBadge}>
+                              {pendientes}
+                          </span>
+                      )}
+                  </NavLink>
+              );
+          })}
           {esAdmin && (
             <NavLink
               to={`/obras/${id}/auditoria`}
               className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
             >
-              <span className={styles.icon}>🔍</span>
-              Actividad
+              <History size={20} />
+              <span>Actividad</span>
             </NavLink>
           )}
         </nav>
