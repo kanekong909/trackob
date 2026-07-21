@@ -7,6 +7,7 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import FotoCard from './FotoCard';
 import ProgresoModal from './ProgresoModal';
 import FotoDetailModal from './FotoDetailModal';
+import FotoLightbox from './FotoLightbox';
 import styles from './Progreso.module.css';
 
 export default function Progreso() {
@@ -19,6 +20,7 @@ export default function Progreso() {
   const [etapaFiltro, setEtapaFiltro] = useState('');
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [indiceAbierto, setIndiceAbierto] = useState(null);
   const [fotoDetalle, setFotoDetalle] = useState(null);
   const [fotoAEliminar, setFotoAEliminar] = useState(null);
   const [eliminando, setEliminando] = useState(false);
@@ -57,6 +59,7 @@ export default function Progreso() {
 
   function pedirEliminar(foto) {
     setFotoDetalle(null);
+    setIndiceAbierto(null);
     setFotoAEliminar(foto);
   }
 
@@ -123,8 +126,8 @@ export default function Progreso() {
 
       {!loading && !error && fotosFiltradas.length > 0 && (
         <div className={styles.grid}>
-          {fotosFiltradas.map((foto) => (
-            <FotoCard key={foto.id} foto={foto} onClick={() => setFotoDetalle(foto)} />
+          {fotosFiltradas.map((foto, i) => (
+            <FotoCard key={foto.id} foto={foto} onClick={() => setIndiceAbierto(i)} />
           ))}
         </div>
       )}
@@ -136,6 +139,16 @@ export default function Progreso() {
         etapasExistentes={etapas}
         onCreated={handleCreated}
       />
+
+      {indiceAbierto !== null && (
+        <FotoLightbox
+          fotos={fotosFiltradas}
+          index={indiceAbierto}
+          onClose={() => setIndiceAbierto(null)}
+          onIndexChange={setIndiceAbierto}
+          onVerDetalles={(foto) => { setIndiceAbierto(null); setFotoDetalle(foto); }}
+        />
+      )}
 
       <FotoDetailModal
         open={Boolean(fotoDetalle)}

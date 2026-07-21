@@ -1,0 +1,31 @@
+.bar {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .bar {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--paper);
+    border-bottom: 1px solid var(--concrete-dim);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .backBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: transparent;
+    border: none;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink);
+    padding: 0;
+  }
+
+  .arrow {
+    font-size: var(--text-base);
+  }
+}

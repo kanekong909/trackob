@@ -44,7 +44,14 @@ export default function FotoDetailModal({ open, onClose, foto, etapasExistentes,
   return (
     <Modal open={open} onClose={onClose} title="Foto de avance">
       <div className={styles.detail}>
-        <img src={cloudinaryThumb(foto.foto_url, 1000)} alt={foto.etapa || 'Avance de obra'} className={styles.detailFoto} />
+        <div className={styles.detailHeaderRow}>
+          <img src={cloudinaryThumb(foto.foto_url, 120)} alt="" className={styles.detailThumb} />
+          <div className={styles.detailMeta}>
+            {foto.etapa && <span className={styles.detailEtapa}>{foto.etapa}</span>}
+            <span className={styles.detailFecha}>{formatDate(foto.fecha)}</span>
+            <span className={styles.detailAutor}>Subida por {foto.usuario_nombre}</span>
+          </div>
+        </div>
 
         {editando ? (
           <form className={styles.formModal} onSubmit={guardar}>
@@ -64,19 +71,12 @@ export default function FotoDetailModal({ open, onClose, foto, etapasExistentes,
             </div>
           </form>
         ) : (
-          <>
-            <div className={styles.detailMeta}>
-              {foto.etapa && <span className={styles.detailEtapa}>{foto.etapa}</span>}
-              <span className={styles.detailFecha}>{formatDate(foto.fecha)}</span>
-              <span className={styles.detailAutor}>Subida por {foto.usuario_nombre}</span>
-            </div>
-            <div className={styles.detailActions}>
-              <Button variant="outline" onClick={() => setEditando(true)}>Editar fecha / etapa</Button>
-              {puedeEliminar && (
-                <Button variant="danger" onClick={() => onDelete(foto)}>Eliminar</Button>
-              )}
-            </div>
-          </>
+          <div className={styles.detailActions}>
+            <Button variant="outline" onClick={() => setEditando(true)}>Editar fecha / etapa</Button>
+            {puedeEliminar && (
+              <Button variant="danger" onClick={() => onDelete(foto)}>Eliminar</Button>
+            )}
+          </div>
         )}
       </div>
     </Modal>

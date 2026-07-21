@@ -61,11 +61,22 @@ export default function Sidebar() {
   const { esAdmin, obra } = useMiRolObra(id);
   const [perfilOpen, setPerfilOpen] = useState(false);
 
+  // Si el usuario es el creador de la obra, usa el logo del AuthContext
+  // para reflejar los cambios inmediatamente al editar el perfil.
+  const logoAMostrar =
+    obra?.creador_id === usuario?.id
+      ? usuario?.logo_empresa_url
+      : obra?.logo_empresa_url;
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        {obra?.logo_empresa_url ? (
-          <img src={cloudinaryThumb(obra.logo_empresa_url, 160)} alt="" className={styles.logoEmpresa} />
+        {logoAMostrar ? (
+          <img
+            src={cloudinaryThumb(logoAMostrar, 160)}
+            alt=""
+            className={styles.logoEmpresa}
+          />
         ) : (
           <>
             <span className={styles.logoMark}>TO</span>

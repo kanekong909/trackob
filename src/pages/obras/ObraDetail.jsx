@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../api/client';
+import { useAuth } from '../../context/AuthContext';
 import { formatCurrency, cloudinaryThumb } from '../../utils/format';
 import Button from '../../components/ui/Button';
 import DivisaToggle from '../../components/ui/DivisaToggle';
@@ -10,6 +11,7 @@ import styles from './ObraDetail.module.css';
 
 export default function ObraDetail() {
   const { id } = useParams();
+  const { usuario } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -48,8 +50,12 @@ export default function ObraDetail() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div>
-          {obra.logo_empresa_url && (
-            <img src={cloudinaryThumb(obra.logo_empresa_url, 200)} alt="" className={styles.logoEmpresa} />
+          {(obra.creador_id === usuario?.id ? usuario?.logo_empresa_url : obra.logo_empresa_url) && (
+            <img
+              src={cloudinaryThumb(obra.creador_id === usuario?.id ? usuario.logo_empresa_url : obra.logo_empresa_url, 200)}
+              alt=""
+              className={styles.logoEmpresa}
+            />
           )}
           <p className={styles.eyebrow}>{obra.ubicacion || 'Sin ubicación'} · {moneda}</p>
           <h1>{obra.nombre}</h1>
