@@ -76,6 +76,12 @@
   gap: var(--space-3);
 }
 
+.columnOver {
+  background: var(--paper);
+  outline: 2px dashed var(--blueprint);
+  transition: background .15s ease;
+}
+
 .columnTitle {
   display: flex;
   align-items: center;
@@ -101,6 +107,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+
+  min-height:150px;
 }
 
 .columnEmpty {
@@ -116,31 +124,65 @@
   }
 }
 
-/* ---- Card ---- */
+/* ============================================
+   TARJETAS (CARDS) MEJORADAS
+   ============================================ */
+
 .card {
   background: var(--paper);
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  cursor: grab;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--concrete-dim);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--blueprint);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--blueprint-dim);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* Estado: Pendiente */
+.card[data-estado="pendiente"]::before {
+  background: #f59e0b;
+}
+
+/* Estado: En progreso */
+.card[data-estado="en_progreso"]::before {
+  background: #3b82f6;
+}
+
+/* Estado: Hecho */
+.card[data-estado="hecho"]::before {
+  background: #10b981;
 }
 
 .cardDone {
-  opacity: 0.7;
-}
-
-.cardTop {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.cardTitle {
-  font-weight: 600;
-  font-size: var(--text-sm);
+  opacity: 0.75;
+  border-color: #d1d5db;
 }
 
 .cardDone .cardTitle {
@@ -148,29 +190,104 @@
   color: var(--steel);
 }
 
+.cardDragging {
+  opacity: 0.4;
+  transform: rotate(2deg) scale(0.98);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  cursor: grabbing !important;
+  border-color: var(--blueprint);
+}
+
+/* Card Top */
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.dragHandle {
+  cursor: grab;
+  user-select: none;
+  color: var(--steel-light);
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  touch-action: none;
+  opacity: 0.3;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.card:hover .dragHandle {
+  opacity: 0.7;
+}
+
+.dragHandle:hover {
+  background: var(--concrete-dim);
+  opacity: 1;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.cardTitle {
+  flex: 1;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.4;
+}
+
 .cardActions {
   display: flex;
   gap: 2px;
   flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card:hover .cardActions {
+  opacity: 1;
 }
 
 .cardActionBtn {
   background: transparent;
   border: none;
-  padding: 2px 6px;
+  padding: 4px 8px;
   border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--steel);
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
-.cardActionBtn:hover { background: var(--concrete); color: var(--ink); }
-.cardActionDanger:hover { background: var(--danger-dim); color: var(--danger); }
 
+.cardActionBtn:hover {
+  background: var(--concrete);
+  color: var(--ink);
+}
+
+.cardActionDanger:hover {
+  background: var(--danger-dim);
+  color: var(--danger);
+}
+
+/* Card Descripción */
 .cardDesc {
   font-size: var(--text-xs);
   color: var(--steel);
-  line-height: 1.4;
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 4px;
+  border-left: 2px solid var(--concrete-dim);
+  padding-left: var(--space-3);
 }
 
+/* Card Meta (asignado + fecha) */
 .cardMeta {
   display: flex;
   align-items: center;
@@ -178,24 +295,48 @@
   gap: var(--space-2);
   font-size: var(--text-xs);
   color: var(--steel);
+  padding: var(--space-1) 0;
 }
 
 .cardAsignado {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cardAsignado .avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blueprint-dim);
+  color: var(--blueprint);
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
 .cardFecha {
   flex-shrink: 0;
   font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--concrete);
 }
 
 .cardFechaVencida {
   color: var(--danger);
   font-weight: 600;
+  background: var(--danger-dim);
 }
 
+/* Card Footer */
 .cardFooter {
   display: flex;
   align-items: center;
@@ -204,6 +345,208 @@
   padding-top: var(--space-2);
   border-top: 1px solid var(--concrete-dim);
 }
+
+/* Select de estado mejorado */
+.estadoSelect {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  border: 1.5px solid var(--concrete-dim);
+  border-radius: var(--radius-sm);
+  padding: 4px 24px 4px 10px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: all 0.15s ease;
+  min-width: 100px;
+}
+
+.estadoSelect:hover {
+  border-color: var(--blueprint);
+}
+
+.estadoSelect:focus {
+  outline: none;
+  border-color: var(--blueprint);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Opciones del select por estado */
+.estadoSelect option[value="pendiente"] {
+  color: #f59e0b;
+}
+.estadoSelect option[value="en_progreso"] {
+  color: #3b82f6;
+}
+.estadoSelect option[value="hecho"] {
+  color: #10b981;
+}
+
+.estadoReadonly {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--steel);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--concrete);
+}
+
+/* Badge de estado en la card */
+.estadoBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.estadoBadge.pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.estadoBadge.en_progreso {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.estadoBadge.hecho {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Historial link */
+.historialLink {
+  background: transparent;
+  border: none;
+  color: var(--blueprint);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+}
+
+.historialLink:hover {
+  background: var(--blueprint-dim);
+  color: var(--blueprint);
+}
+
+/* ============================================
+   COLUMNAS MEJORADAS
+   ============================================ */
+
+.column {
+  flex: 1;
+  min-width: 0;
+  background: var(--concrete);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.columnOver {
+  background: var(--paper);
+  border-color: var(--blueprint);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+  transition: all 0.2s ease;
+}
+
+.columnTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--steel);
+  padding: 0 var(--space-1);
+}
+
+.columnTitle .count {
+  background: var(--concrete-dim);
+  color: var(--ink);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 1px 10px;
+  font-family: var(--font-mono);
+  min-width: 20px;
+  text-align: center;
+}
+
+.columnList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 150px;
+  padding: 2px 0;
+}
+
+.columnEmpty {
+  color: var(--steel-light);
+  font-size: var(--text-sm);
+  padding: var(--space-4);
+  text-align: center;
+  border: 2px dashed var(--concrete-dim);
+  border-radius: var(--radius-md);
+  font-weight: 400;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 900px) {
+  .board {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: var(--space-3);
+  }
+  
+  .cardActions {
+    opacity: 1;
+  }
+  
+  .dragHandle {
+    opacity: 0.7;
+  }
+  
+  .estadoSelect {
+    min-width: 80px;
+    font-size: 11px;
+    padding: 3px 20px 3px 8px;
+  }
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.cardDragging {
+  opacity: .6;
+  transform: rotate(3deg);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+}
+
 
 .estadoSelect {
   font-size: var(--text-xs);
@@ -281,4 +624,98 @@
 .historialMeta {
   font-size: var(--text-xs);
   color: var(--steel);
+}
+
+/* DRAG AND DROP ICON */
+.dragHandle {
+  cursor: grab;
+  user-select: none;
+  color: var(--steel);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.dragHandle:hover {
+  background: var(--concrete-dim);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+/* Agrega estos estilos al final del archivo */
+
+/* Drag & Drop - Mejoras */
+.columnOver {
+  background: rgba(59, 130, 246, 0.08) !important;
+  outline: 2px dashed var(--blueprint);
+  transition: background 0.2s ease;
+}
+
+.cardDragging {
+  opacity: 0.4;
+  transform: rotate(2deg) scale(0.98);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  cursor: grabbing !important;
+}
+
+/* Asegura que el drag handle no sea clickeable por otros elementos */
+.dragHandle {
+  cursor: grab;
+  user-select: none;
+  color: var(--steel);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  touch-action: none; /* Importante para touch */
+}
+
+.dragHandle:hover {
+  background: var(--concrete-dim);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+/* Para que el select no active el drag */
+.estadoSelect {
+  touch-action: manipulation; /* Evita conflictos con touch */
+}
+
+/* Avatar con foto */
+.cardAsignado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--blueprint-dim);
+  color: var(--blueprint);
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.avatarImg {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--concrete-dim);
 }
