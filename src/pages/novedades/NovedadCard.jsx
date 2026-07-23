@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ChatThread from '../chat/ChatThread';
+import { useComentariosNuevos } from '../../hooks/useComentariosNuevos';
 import styles from './Novedades.module.css';
 
 function formatFechaHora(iso) {
@@ -9,7 +10,12 @@ function formatFechaHora(iso) {
 export default function NovedadCard({ novedad, obraId, esAdmin, puedeEliminar, onMarcarEstado, onEliminar }) {
   const [fotoAbierta, setFotoAbierta] = useState(false);
   const [comentariosAbiertos, setComentariosAbiertos] = useState(false);
+  const { hayNuevos, marcarVisto } = useComentariosNuevos(obraId, novedad.id, comentariosAbiertos);
   const resuelta = novedad.estado === 'resuelta';
+
+  function toggleComentarios() {
+    setComentariosAbiertos((v) => !v);
+  }
 
   return (
     <div className={`${styles.card} ${resuelta ? styles.cardResuelta : ''}`}>
@@ -54,8 +60,9 @@ export default function NovedadCard({ novedad, obraId, esAdmin, puedeEliminar, o
             {resuelta ? 'Reabrir' : 'Marcar como resuelta'}
           </button>
         )}
-        <button className={styles.comentariosBtn} onClick={() => setComentariosAbiertos((v) => !v)}>
+        <button className={styles.comentariosBtn} onClick={toggleComentarios}>
           💬 {comentariosAbiertos ? 'Ocultar comentarios' : 'Comentarios'}
+          {hayNuevos && !comentariosAbiertos && <span className={styles.comentariosDot} />}
         </button>
         {puedeEliminar && (
           <button className={styles.deleteBtn} onClick={() => onEliminar(novedad)}>Eliminar</button>
@@ -63,7 +70,13 @@ export default function NovedadCard({ novedad, obraId, esAdmin, puedeEliminar, o
       </div>
 
       {comentariosAbiertos && (
-        <ChatThread obraId={obraId} novedadId={novedad.id} compact placeholder="Comentar sobre esta novedad…" />
+        <ChatThread
+          obraId={obraId}
+          novedadId={novedad.id}
+          compact
+          placeholder="Comentar sobre esta novedad…"
+          onMensajesCargados={marcarVisto}
+        />
       )}
     </div>
   );

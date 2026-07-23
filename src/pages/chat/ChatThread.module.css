@@ -85,6 +85,85 @@
   color: rgba(255,255,255,0.65);
 }
 
+.editable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.editadoTag {
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.edicionBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 200px;
+}
+
+.edicionInput {
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  font-size: var(--text-sm);
+  font-family: inherit;
+  color: var(--ink);
+  resize: vertical;
+  min-height: 44px;
+}
+
+.edicionAcciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.edicionAcciones button {
+  background: rgba(255,255,255,0.2);
+  color: inherit;
+  border: none;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.escribiendoRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: var(--space-2);
+}
+
+.escribiendoTexto {
+  font-size: var(--text-xs);
+  color: var(--steel-light);
+  font-style: italic;
+}
+
+.escribiendoDots {
+  display: flex;
+  gap: 3px;
+}
+
+.escribiendoDots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--steel-light);
+  animation: escribiendoBounce 1.2s infinite ease-in-out;
+}
+
+.escribiendoDots span:nth-child(2) { animation-delay: 0.15s; }
+.escribiendoDots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes escribiendoBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
 .inputRow {
   display: flex;
   gap: var(--space-2);
