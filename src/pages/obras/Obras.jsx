@@ -5,6 +5,7 @@ import ObraCard from './ObraCard';
 import CrearObraModal from './CrearObraModal';
 import Button from '../../components/ui/Button';
 import PerfilModal from '../perfil/PerfilModal';
+import { cloudinaryThumb } from '../../utils/format';
 import styles from './Obras.module.css';
 
 export default function Obras() {
@@ -43,7 +44,9 @@ export default function Obras() {
         </div>
         <div className={styles.headerActions}>
           <button className={styles.perfilBtn} onClick={() => setPerfilOpen(true)} aria-label="Mi perfil">
-            {usuario?.nombre?.[0]?.toUpperCase()}
+            {usuario?.fondo_url
+              ? <img src={cloudinaryThumb(usuario.fondo_url, 60)} alt="" className={styles.perfilImg} />
+              : usuario?.nombre?.[0]?.toUpperCase()}
           </button>
           <Button onClick={() => setModalOpen(true)}>+ Nueva obra</Button>
         </div>

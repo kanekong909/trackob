@@ -10,7 +10,7 @@ import { cloudinaryThumb } from '../../utils/format';
 import styles from './PerfilModal.module.css';
 
 export default function PerfilModal({ open, onClose }) {
-  const { usuario, setUsuario } = useAuth();
+  const { usuario, setUsuario, logout } = useAuth();
   const toast = useToast();
   const fileRef = useRef(null);
 
@@ -235,6 +235,16 @@ export default function PerfilModal({ open, onClose }) {
             />
             <Button type="submit" loading={guardandoPass}>Actualizar contraseña</Button>
           </form>
+        </section>
+
+        <section className={styles.section}>
+          <Button
+            variant="outline"
+            fullWidth
+            onClick={() => { onClose(); logout(); }}
+          >
+            Cerrar sesión
+          </Button>
         </section>
 
       </div>

@@ -148,6 +148,18 @@
   margin-bottom: var(--space-4);
 }
 
+.teamHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.teamHeader h2 {
+  margin-bottom: 0;
+}
+
 .catList {
   display: flex;
   flex-direction: column;

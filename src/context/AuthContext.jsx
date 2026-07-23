@@ -28,14 +28,16 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     const data = await api.post('/api/auth/login', { email, password });
     setToken(data.token);
-    setUsuario(data.usuario);
+    await cargarPerfil();
+    // setUsuario(data.usuario);
     return data.usuario;
   }
 
   async function registro(nombre, email, password) {
     const data = await api.post('/api/auth/registro', { nombre, email, password });
     setToken(data.token);
-    setUsuario(data.usuario);
+    await cargarPerfil();
+    // setUsuario(data.usuario);
     return data.usuario;
   }
 

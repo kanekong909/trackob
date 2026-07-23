@@ -6,6 +6,7 @@ import { formatCurrency, cloudinaryThumb } from '../../utils/format';
 import Button from '../../components/ui/Button';
 import DivisaToggle from '../../components/ui/DivisaToggle';
 import EditarObraModal from './EditarObraModal';
+import EquipoModal from './EquipoModal';
 import { useDisplayCurrency } from '../../hooks/useDisplayCurrency';
 import styles from './ObraDetail.module.css';
 
@@ -16,6 +17,7 @@ export default function ObraDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editando, setEditando] = useState(false);
+  const [gestionandoEquipo, setGestionandoEquipo] = useState(false);
   const idRef = useRef(id);
 
   useEffect(() => { idRef.current = id; }, [id]);
@@ -145,7 +147,12 @@ export default function ObraDetail() {
 
       {colaboradores?.length > 0 && (
         <section className={styles.section}>
-          <h2>Equipo</h2>
+          <div className={styles.teamHeader}>
+            <h2>Equipo</h2>
+            {data.mi_rol === 'admin' && (
+              <Button variant="outline" size="sm" onClick={() => setGestionandoEquipo(true)}>Gestionar equipo</Button>
+            )}
+          </div>
           <div className={styles.team}>
             {colaboradores.map((c) => (
               <div key={c.id} className={styles.teamMember}>
@@ -158,6 +165,16 @@ export default function ObraDetail() {
             ))}
           </div>
         </section>
+      )}
+
+      {data.mi_rol === 'admin' && (
+        <EquipoModal
+          open={gestionandoEquipo}
+          onClose={() => setGestionandoEquipo(false)}
+          obraId={id}
+          colaboradores={colaboradores || []}
+          onChanged={cargar}
+        />
       )}
     </div>
   );
