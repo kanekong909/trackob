@@ -7,6 +7,7 @@ import { api } from '../../api/client';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency, formatMiles, formatQty, parseMiles } from '../../utils/format';
 import styles from './Gastos.module.css';
+import { Paperclip } from "lucide-react";
 
 const hoy = () => new Date().toISOString().split('T')[0];
 
@@ -267,7 +268,8 @@ export default function GastoModal({ open, onClose, obraId, categorias, gasto, o
             </div>
           ) : (
             <label className={styles.fotoUpload}>
-              📎 Adjuntar foto o PDF
+              <Paperclip size={18}/>
+               Adjuntar foto o PDF
               <input ref={fileRef} type="file" accept="image/*,application/pdf" onChange={handleFotoChange} hidden />
             </label>
           )}
