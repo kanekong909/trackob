@@ -3,6 +3,7 @@ import { formatDate } from "../../utils/format";
 import styles from "./Tareas.module.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Pencil, Trash2 } from "lucide-react";
 
 const ESTADOS = [
   { value: "pendiente", label: "Pendiente" },
@@ -95,14 +96,14 @@ export default function TareaCard({
               className={styles.cardActionBtn}
               aria-label="Editar"
             >
-              ✎
+              <Pencil size={14} />
             </button>
             <button
               onClick={() => onDelete(tarea)}
               className={`${styles.cardActionBtn} ${styles.cardActionDanger}`}
               aria-label="Eliminar"
             >
-              🗑
+              <Trash2 size={14} />
             </button>
           </div>
         )}

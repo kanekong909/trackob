@@ -1,4 +1,5 @@
 import styles from './Bitacora.module.css';
+import { Pencil, Trash2 } from "lucide-react";
 
 function formatFechaLarga(iso) {
   const [y, m, d] = iso.split('T')[0].split('-').map(Number);
@@ -20,7 +21,14 @@ export default function NotaCard({ nota, esHoy, puedeEliminar, onClick, onDelete
         <p className={styles.cardNota}>{nota.nota}</p>
       </button>
       {puedeEliminar && (
-        <button type="button" className={styles.deleteBtn} onClick={onDelete} aria-label="Eliminar nota">🗑</button>
+        <button 
+          type="button" 
+          className={styles.deleteBtn} 
+          onClick={onDelete} 
+          aria-label="Eliminar nota"
+        >
+          <Trash2 size={14} />
+        </button>
       )}
     </div>
   );

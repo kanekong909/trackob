@@ -7,6 +7,7 @@ import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import styles from './EquipoModal.module.css';
+import { Trash2 } from "lucide-react";
 
 export default function EquipoModal({ open, onClose, obraId, colaboradores, onChanged }) {
   const { usuario } = useAuth();
@@ -100,7 +101,7 @@ export default function EquipoModal({ open, onClose, obraId, colaboradores, onCh
                   onClick={() => pedirQuitar(c)}
                   aria-label={`Quitar a ${c.nombre}`}
                 >
-                  🗑
+                  <Trash2 size={14} />
                 </button>
               </div>
             );

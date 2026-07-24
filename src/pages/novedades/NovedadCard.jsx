@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ChatThread from '../chat/ChatThread';
 import { useComentariosNuevos } from '../../hooks/useComentariosNuevos';
 import styles from './Novedades.module.css';
+import { MessagesSquare } from "lucide-react";
 
 function formatFechaHora(iso) {
   return new Date(iso).toLocaleString('es-CO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
@@ -61,7 +62,7 @@ export default function NovedadCard({ novedad, obraId, esAdmin, puedeEliminar, o
           </button>
         )}
         <button className={styles.comentariosBtn} onClick={toggleComentarios}>
-          💬 {comentariosAbiertos ? 'Ocultar comentarios' : 'Comentarios'}
+          <MessagesSquare size={14} />  {comentariosAbiertos ? 'Ocultar comentarios' : 'Comentarios'}
           {hayNuevos && !comentariosAbiertos && <span className={styles.comentariosDot} />}
         </button>
         {puedeEliminar && (

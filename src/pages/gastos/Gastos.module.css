@@ -478,3 +478,8 @@
   padding: var(--space-3);
   margin: 0;
 }
+
+/* ICONO CANDADO */
+.rowLocked {
+  color: #e53935; /* rojo */
+}

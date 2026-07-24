@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './CategoriasModal.module.css';
+import { Trash2 } from "lucide-react";
 
 export default function CategoriaRow({ categoria, onSave, onDelete }) {
   const [nombre, setNombre] = useState(categoria.nombre);
@@ -37,7 +38,14 @@ export default function CategoriaRow({ categoria, onSave, onDelete }) {
       {categoria.es_global ? (
         <span className={styles.globalBadge} title="Categoría por defecto, disponible en todas las obras">Global</span>
       ) : (
-        <button type="button" className={styles.deleteBtn} onClick={() => onDelete(categoria)} aria-label="Eliminar categoría">🗑</button>
+        <button 
+          type="button" 
+          className={styles.deleteBtn} 
+          onClick={() => onDelete(categoria)} 
+          aria-label="Eliminar categoría"
+        >
+          <Trash2 size={14} />
+        </button>
       )}
       {dirty && (
         <button type="button" className={styles.saveBtn} onClick={guardar} disabled={guardando}>

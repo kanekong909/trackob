@@ -8,6 +8,7 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import NotaCard from './NotaCard';
 import NotaModal from './NotaModal';
 import styles from './Bitacora.module.css';
+import { Pencil, Trash2 } from "lucide-react";
 
 function hoy() {
   return new Date().toISOString().split('T')[0];

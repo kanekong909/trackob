@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import fieldStyles from './Field.module.css';
 import styles from './PasswordField.module.css';
+import { Eye, EyeOff } from "lucide-react";
 
 export default function PasswordField({ label, error, hint, ...rest }) {
   const [visible, setVisible] = useState(false);
@@ -21,7 +22,7 @@ export default function PasswordField({ label, error, hint, ...rest }) {
           aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
           tabIndex={-1}
         >
-          {visible ? '🙈' : '👁'}
+          {visible ? <EyeOff size={18}/> : <Eye size={18}/>}
         </button>
       </div>
       {hint && !error && <span className={fieldStyles.hint}>{hint}</span>}

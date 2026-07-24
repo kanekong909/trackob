@@ -4,6 +4,7 @@ import Field from '../../components/ui/Field';
 import Button from '../../components/ui/Button';
 import { api } from '../../api/client';
 import styles from './Novedades.module.css';
+import { Camera } from "lucide-react";
 
 export default function NovedadModal({ open, onClose, obraId, onCreated }) {
   const fileRef = useRef(null);
@@ -82,7 +83,8 @@ export default function NovedadModal({ open, onClose, obraId, onCreated }) {
             </div>
           ) : (
             <label className={styles.fotoUpload}>
-              📷 Tomar foto o adjuntar
+              <Camera size={14} /> 
+              Tomar foto o adjuntar
               <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handleFotoChange} hidden />
             </label>
           )}
