@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/ui/Modal';
 import Field from '../../components/ui/Field';
 import PasswordField from '../../components/ui/PasswordField';
@@ -11,6 +12,7 @@ import styles from './PerfilModal.module.css';
 
 export default function PerfilModal({ open, onClose }) {
   const { usuario, setUsuario, logout } = useAuth();
+  const navigate = useNavigate();
   const toast = useToast();
   const fileRef = useRef(null);
 
@@ -236,6 +238,28 @@ export default function PerfilModal({ open, onClose }) {
             <Button type="submit" loading={guardandoPass}>Actualizar contraseña</Button>
           </form>
         </section>
+
+        <section className={styles.section}>
+          <Button
+            variant="outline"
+            fullWidth
+            onClick={() => { onClose(); navigate('/planes'); }}
+          >
+            Ver planes y facturación
+          </Button>
+        </section>
+
+        {usuario?.rol === 'superadmin' && (
+          <section className={styles.section}>
+            <Button
+              variant="outline"
+              fullWidth
+              onClick={() => { onClose(); navigate('/superadmin'); }}
+            >
+              Panel de superadmin
+            </Button>
+          </section>
+        )}
 
         <section className={styles.section}>
           <Button

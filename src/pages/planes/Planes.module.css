@@ -1,0 +1,214 @@
+.page {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.header h1 { font-size: var(--text-3xl); }
+.subtitle { color: var(--steel); font-size: var(--text-sm); margin-top: var(--space-1); }
+
+.state, .stateError {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--steel);
+  background: var(--paper);
+  border-radius: var(--radius-md);
+}
+.stateError { color: var(--danger); background: var(--danger-dim); }
+
+.miPlanCard {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.miPlanLabel {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.6);
+}
+
+.miPlanNombre {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.miPlanVence {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.7);
+  margin-top: var(--space-1);
+}
+
+.avisoPendiente {
+  background: var(--warning-dim, #FFF4E0);
+  color: var(--warning, #B5720A);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.cardActual {
+  border-color: var(--safety);
+}
+
+.badgeActual {
+  position: absolute;
+  top: -10px;
+  right: var(--space-4);
+  background: var(--safety);
+  color: var(--paper);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.planNombre { font-size: var(--text-lg); }
+
+.precio {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+.precioMes {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--steel);
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--steel);
+}
+
+.historial h2 { font-size: var(--text-lg); margin-bottom: var(--space-3); }
+
+.historialLista {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.historialFila {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--concrete-dim);
+  font-size: var(--text-sm);
+}
+.historialFila:last-child { border-bottom: none; }
+
+.historialFecha { margin-left: auto; color: var(--steel-light); font-size: var(--text-xs); }
+
+.estadoBadge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.estado_pendiente, .estado_en_revision { background: var(--warning-dim, #FFF4E0); color: var(--warning, #B5720A); }
+.estado_aprobado { background: var(--success-dim); color: var(--success); }
+.estado_rechazado { background: var(--danger-dim); color: var(--danger); }
+
+/* ---- Transfer modal ---- */
+.transferWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.datosCuenta {
+  background: var(--concrete);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.datosLabel {
+  font-size: var(--text-xs);
+  color: var(--steel);
+  text-transform: uppercase;
+}
+
+.montoGrande {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.cuentaTexto {
+  font-size: var(--text-sm);
+  white-space: pre-wrap;
+  color: var(--ink);
+}
+
+.referenciaBox {
+  margin-top: var(--space-2);
+  background: var(--paper);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.referenciaBox span { font-size: var(--text-xs); color: var(--steel); }
+.referenciaBox strong { font-family: var(--font-mono); font-size: var(--text-base); }
+
+.comprobanteForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.uploadLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed var(--concrete-dim);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--steel);
+  cursor: pointer;
+  text-align: center;
+}
+.uploadLabel:hover { border-color: var(--blueprint); color: var(--blueprint); }

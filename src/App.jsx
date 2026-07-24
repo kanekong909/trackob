@@ -14,6 +14,8 @@ import Progreso from './pages/progreso/Progreso';
 import Bitacora from './pages/bitacora/Bitacora';
 import Auditoria from './pages/auditoria/Auditoria';
 import Chat from './pages/chat/Chat';
+import Planes from './pages/planes/Planes';
+import Superadmin from './pages/superadmin/Superadmin';
 
 export default function App() {
   return (
@@ -40,6 +42,8 @@ export default function App() {
               <Route path="/obras/:id/bitacora" element={<Bitacora />} />
               <Route path="/obras/:id/auditoria" element={<Auditoria />} />
               <Route path="/obras/:id/chat" element={<Chat />} />
+              <Route path="/planes" element={<Planes />} />
+              <Route path="/superadmin" element={<Superadmin />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/obras" replace />} />
